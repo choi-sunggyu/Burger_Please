@@ -10,7 +10,14 @@ public class CustomerMover : MonoBehaviour
     public void MoveTo(Vector3 target)
     {
         agent.isStopped = false;
+        agent.updateRotation = true; // stop에서 껐었음
         agent.SetDestination(target);
+    }
+
+    public void Stop()
+    {
+        agent.isStopped = true;
+        agent.updateRotation = false;   // 이후 회전은 코드가 직접 제어
     }
 
     public bool HasArrived()

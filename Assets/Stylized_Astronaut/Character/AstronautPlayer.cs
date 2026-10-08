@@ -9,7 +9,7 @@ namespace AstronautPlayer
 
         [Header("Movement")]
         public float speed = 6.0f;
-        public float turnSpeed = 10.0f;
+        public float turnSpeed = 20.0f;
         public float gravity = 20.0f;
 
         [Header("Camera")]

@@ -97,7 +97,7 @@ public class Customer : MonoBehaviour
                 break;
 
             case CustomerState.Eating:
-                break;                    // 코루틴이 처리
+                break; // 코루틴이 처리
 
             case CustomerState.Leaving:
                 if (mover.HasArrived()) Destroy(gameObject);
@@ -121,7 +121,11 @@ public class Customer : MonoBehaviour
                 break;
 
             case CustomerState.Eating:
-                transform.rotation = targetTable.GetSeat(seatIndex).rotation;   // 테이블 바라보기
+                mover.Stop();
+                Vector3 dir = targetTable.transform.position - transform.position;
+                dir.y = 0f;
+                if (dir.sqrMagnitude > 0.001f)
+                    transform.rotation = Quaternion.LookRotation(dir);
                 StartCoroutine(EatRoutine());
                 break;
 
@@ -155,12 +159,13 @@ public class Customer : MonoBehaviour
     void LeaveStuff()
     {
         foreach (var cube in heldCubes) Destroy(cube.gameObject);
-    heldCubes.Clear();
+        heldCubes.Clear();
 
-    targetTable.PlaceTip(moneyPrefab);   // 쌓는 위치는 Table이 결정
-    Instantiate(trashPrefab, targetTable.transform.position + Vector3.up * 0.5f, Quaternion.identity);
+        targetTable.PlaceTip(moneyPrefab);   // 쌓는 위치는 Table이 결정
+        targetTable.PlaceTrash(trashPrefab);
+        Instantiate(trashPrefab, targetTable.transform.position + Vector3.up * 0.5f, Quaternion.identity);
     }
-    
+
     // ───── 정리 ─────
 
     void LeaveQueue()

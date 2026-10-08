@@ -77,7 +77,6 @@ GameObject:
   - component: {fileID: 1247148045669568888}
   - component: {fileID: 5294382712885238135}
   - component: {fileID: 3261600226990993953}
-  - component: {fileID: 3689284127577582254}
   - component: {fileID: 4182754925391920299}
   - component: {fileID: 2509864185660760067}
   m_Layer: 0
@@ -236,23 +235,6 @@ MonoBehaviour:
   carry: {fileID: 3416635057200140663}
   grab: {fileID: 1247148045669568888}
   putInterval: 0.15
---- !u!114 &3689284127577582254
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 924287863805642530}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: b40527253b27acd41a20b3eac9d694f6, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::SellingAction
-  queue: {fileID: 0}
-  cubeSpot: {fileID: 0}
-  giveInterval: 0.2
-  cashierZone: {fileID: 0}
-  requireCashier: 0
 --- !u!114 &4182754925391920299
 MonoBehaviour:
   m_ObjectHideFlags: 0

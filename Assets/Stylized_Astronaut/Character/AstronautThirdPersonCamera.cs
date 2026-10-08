@@ -16,8 +16,8 @@ namespace AstronautThirdPersonCamera
 
     private float currentX = 0.0f;
     private float currentY = 45.0f;
-    private float sensitivityX = 20.0f;
-    private float sensitivityY = 20.0f;
+    private float sensitivityX = 10.0f;
+    private float sensitivityY = 10.0f;
 
     private void Start()
     {
@@ -26,8 +26,8 @@ namespace AstronautThirdPersonCamera
 
     private void Update()
     {
-        currentX += Input.GetAxis("Mouse X");
-        currentY -= Input.GetAxis("Mouse Y");
+        currentX += Input.GetAxis("Mouse X") * sensitivityX;
+        currentY -= Input.GetAxis("Mouse Y") * sensitivityY;
 
         currentY = Mathf.Clamp(currentY, Y_ANGLE_MIN, Y_ANGLE_MAX);
     }
