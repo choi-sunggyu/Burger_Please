@@ -67,5 +67,7 @@
         "*.sln": "*.csproj",
         "*.slnx": "*.csproj"
     },
-    "dotnet.defaultSolution": "Burger_Please.slnx"
+    "dotnet.defaultSolution": "Burger_Please.slnx",
+    "dotnet.projects.enableFileBasedPrograms": false,
+    "dotnet.fileBasedApps.enableAutomaticDiscovery": false
 }
