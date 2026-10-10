@@ -4,7 +4,8 @@ public enum StuffType
 {
     Cube,
     Trash,
-    Money
+    Money,
+    CubePack
 }
 
 public class Stuff : MonoBehaviour

@@ -10,13 +10,12 @@ public class CustomerSpawner : MonoBehaviour
 
     // 스폰할 Customer 프리팹 받기
     [Header("참조")]
-    [SerializeField] GameObject customerPrefab;
+    [SerializeField] Customer customerPrefab;
     [SerializeField] public CounterQueue queue;
     [SerializeField] public TableManager tables;
     
     [Header("설정")]
     [SerializeField] float spawnInterval = 3f;
-    [SerializeField] public int maxCustomerCount = 10; // 최대 손님 수
     [SerializeField] int minOrder = 1;
     [SerializeField] int maxOrder = 3;
 
@@ -30,11 +29,12 @@ public class CustomerSpawner : MonoBehaviour
     public void Update()
     {
         timer += Time.deltaTime;
-        if (timer < spawnInterval) return;
+        if (timer < spawnInterval || queue.IsFull) return;   // 줄이 꽉 차면 대기
+
         timer = 0f;
 
-        if (aliveCount >= maxCustomerCount || queue.IsFull) return;
-        SpawnCustomer(Random.Range(minOrder, maxOrder + 1));
+        Customer customer = Instantiate(customerPrefab, spawnPoint.position, spawnPoint.rotation);
+        customer.Init(queue, tables, exitPoint, Random.Range(minOrder, maxOrder + 1));
     } 
 
     void SpawnCustomer(int requiredCount)

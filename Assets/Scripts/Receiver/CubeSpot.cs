@@ -10,8 +10,10 @@ public class CubeSpot : MonoBehaviour, IStuffReceiver
     [SerializeField] private int rows = 2;
     [SerializeField] private int maxLayers = 5;
     [SerializeField] private Vector3 cellSize = new Vector3(0.5f, 0.3f, 0.5f);
+    [SerializeField] private StuffType acceptType = StuffType.Cube;
 
     private readonly List<Stuff> cubes = new List<Stuff>();
+    private readonly List<Stuff> cubePacks = new List<Stuff>();
 
     public int Count => cubes.Count;
     private int Capacity => columns * rows * maxLayers;
@@ -28,7 +30,7 @@ public class CubeSpot : MonoBehaviour, IStuffReceiver
         }
     }
 
-    public bool CanReceive(StuffType type) => type == StuffType.Cube && cubes.Count < Capacity;
+    public bool CanReceive(StuffType type) => type == acceptType && cubes.Count < Capacity;
 
     public void Receive(Stuff stuff)
     {

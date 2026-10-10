@@ -1,7 +1,7 @@
 using UnityEngine;
 using System.Collections.Generic;
 
-public class CounterQueue : MonoBehaviour
+public class CounterQueue : MonoBehaviour, IBuyerQueue
 {
     [SerializeField] Transform frontPoint;   // 맨 앞 자리. 파란 화살표(forward)가 카운터를 향하게 회전
     [SerializeField] float spacing = 1f;     // 손님 사이 간격
@@ -11,6 +11,8 @@ public class CounterQueue : MonoBehaviour
     public List<Customer> customers = new List<Customer>();
     public bool IsFull => customers.Count >= maxLength;
     public Customer Front => customers.Count > 0 ? customers[0] : null;
+
+    IBuyer IBuyerQueue.Front => Front;
 
     // 줄 선 손님 목록 관리, 각자에게 서 있을 위치 선정
     // 기능 : Enqueue, Dequeue, Front, 앞 사람 빠지면 나머지 당기기

@@ -5,7 +5,7 @@ using UnityEngine;
 
 public enum CustomerState { InQueue, Ordering, WaitingTable, MoveToTable, Eating, Leaving }
 
-public class Customer : MonoBehaviour
+public class Customer : MonoBehaviour, IBuyer
 {
     [Header("프리팹 내부")]
     [SerializeField] Transform grabPoint;           // 받은 큐브를 쌓을 위치 (Scale 1,1,1)
@@ -62,7 +62,7 @@ public class Customer : MonoBehaviour
     }
 
     // SellingAction이 호출: CubeSpot.TakeTop()으로 꺼낸 큐브를 받음
-    public void ReceiveCube(Stuff cube)
+    public void ReceiveItem(Stuff cube)
     {
         if (!CanReceive || cube == null) return;
 

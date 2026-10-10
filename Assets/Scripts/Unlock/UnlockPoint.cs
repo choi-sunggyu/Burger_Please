@@ -12,7 +12,7 @@ public class UnlockPoint : MonoBehaviour
 
     [Header("Payment")]
     [SerializeField] private float startDelay = 1f;
-    [SerializeField] private float payInterval = 0.05f;
+    [SerializeField] private float payInterval = 0.01f;
 
     private int remainingMoney;
 

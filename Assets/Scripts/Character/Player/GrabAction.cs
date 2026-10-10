@@ -51,7 +51,7 @@ public class GrabAction : MonoBehaviour
     private bool CanHold(Stuff stuff)
     {
         if (holding.Contains(stuff)) return false;
-        if (holding.Count >= playerStat.Capacity) return false;   // 용량 초과
+        if (stuff.Type != StuffType.Trash && holding.Count >= playerStat.Capacity) return false;   // 큐브일 경우에만 용량 초과 적용 (쓰레기는 무한으로)
         if (!IsEmpty && stuff.Type != HeldType) return false;      // 다른 종류는 내려놓기 전까지 불가
         return true;
     }
