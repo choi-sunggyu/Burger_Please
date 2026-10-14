@@ -27,7 +27,7 @@ public class Customer : MonoBehaviour, IBuyer
     TableManager tables;
     Transform exitPoint;
 
-    CustomerMover mover;
+    NavMover mover;
     CustomerState state;
     bool isFront;
     bool inQueue;
@@ -37,7 +37,7 @@ public class Customer : MonoBehaviour, IBuyer
 
     readonly List<Stuff> heldCubes = new List<Stuff>();
 
-    void Awake() => mover = GetComponent<CustomerMover>();
+    void Awake() => mover = GetComponent<NavMover>();
 
     // ───── 바깥에서 호출 ─────
 

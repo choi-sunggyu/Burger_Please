@@ -4,7 +4,8 @@ using UnityEngine;
 public class GrabAction : MonoBehaviour
 {
     [SerializeField] private Carry carry;
-    [SerializeField] private PlayerStat playerStat;
+    [SerializeField] private Wallet wallet;
+    [SerializeField] private CarrierStat carrierStat;
     [SerializeField] private Transform grabPoint;
     [SerializeField] private float stackHeight = 0.3f; // 물건 하나 높이
 
@@ -45,23 +46,23 @@ public class GrabAction : MonoBehaviour
 
         carry.Forget(stuff); // 주변 목록에서 제거 (GrabAction 이 들고 있으므로 Carry 가 더 이상 관리하지 않음)
         holding.Add(stuff);
-        Debug.Log($"Grabbed {stuff.Type}! ({holding.Count}/{playerStat.Capacity})");
+        Debug.Log($"Grabbed {stuff.Type}! ({holding.Count}/{carrierStat.Capacity})");
     }
 
     private bool CanHold(Stuff stuff)
     {
         if (holding.Contains(stuff)) return false;
-        if (stuff.Type != StuffType.Trash && holding.Count >= playerStat.Capacity) return false;   // 큐브일 경우에만 용량 초과 적용 (쓰레기는 무한으로)
+        if (stuff.Type != StuffType.Trash && holding.Count >= carrierStat.Capacity) return false;   // 큐브일 경우에만 용량 초과 적용 (쓰레기는 무한으로)
         if (!IsEmpty && stuff.Type != HeldType) return false;      // 다른 종류는 내려놓기 전까지 불가
         return true;
     }
 
     private void CollectMoney(Money money)
     {
-        playerStat.GetMoney(money.Value);
+        wallet.GetMoney(money.Value);
         carry.Forget(money);
         Destroy(money.gameObject);
-        Debug.Log($"+{money.Value} (Total: {playerStat.Money})");
+        Debug.Log($"+{money.Value} (Total: {wallet.Money})");
     }
 
     // PutAction 이 맨 위 물건을 하나 꺼내 갈 때 사용

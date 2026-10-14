@@ -3,11 +3,11 @@ using TMPro;
 
 public class MoneyDisplay : MonoBehaviour
 {
-    [SerializeField] private PlayerStat playerStat;
+    [SerializeField] private Wallet wallet;
     [SerializeField] private TMP_Text moneyUI;
     
     void Update()
     {
-        moneyUI.text = playerStat.Money.ToString();
+        moneyUI.text = wallet.Money.ToString();
     }
 }

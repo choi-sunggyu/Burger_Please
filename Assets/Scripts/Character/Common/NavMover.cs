@@ -1,7 +1,7 @@
 using UnityEngine;
 using UnityEngine.AI;
 
-public class CustomerMover : MonoBehaviour
+public class NavMover : MonoBehaviour
 {
     NavMeshAgent agent;
 

@@ -491,11 +491,11 @@ GameObject:
   m_Component:
   - component: {fileID: 4305360861358159046}
   - component: {fileID: 1032043159355229072}
-  - component: {fileID: 6085242315787659433}
   - component: {fileID: -6731718881942666364}
   - component: {fileID: -4253942831515801098}
   - component: {fileID: -7973527566303195160}
   - component: {fileID: 2488044839534689018}
+  - component: {fileID: 8138916466076717249}
   m_Layer: 0
   m_Name: Customer
   m_TagString: Untagged
@@ -545,18 +545,6 @@ Animator:
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
   m_WriteDefaultValuesOnDisable: 0
---- !u!114 &6085242315787659433
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8741066610356262015}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 38e649430ad556141a209634c78bed02, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::CustomerMover
 --- !u!195 &-6731718881942666364
 NavMeshAgent:
   m_ObjectHideFlags: 0
@@ -644,6 +632,18 @@ MonoBehaviour:
   eatDuration: 5
   moneyPrefab: {fileID: 903474689051377537, guid: c49c3a23fa9519541b0a998137f1b4ff, type: 3}
   trashPrefab: {fileID: 2039126837486886584, guid: 39f5eb4cb3ae7f14ab0b7eb9eab38171, type: 3}
+--- !u!114 &8138916466076717249
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8741066610356262015}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 38e649430ad556141a209634c78bed02, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::CustomerMover
 --- !u!1 &8873094579876446970
 GameObject:
   m_ObjectHideFlags: 0

@@ -16,7 +16,7 @@ public class UnlockPoint : MonoBehaviour
 
     private int remainingMoney;
 
-    [SerializeField] private PlayerStat playerStat;
+    [SerializeField] private Wallet wallet;
 
     private float stayTimer;
     private float payTimer;
@@ -38,7 +38,7 @@ public class UnlockPoint : MonoBehaviour
             return;
         }
 
-        if (playerStat == null) // 플레이어 확인
+        if (wallet == null) // 플레이어 확인
         {
             return;
         }
@@ -63,7 +63,7 @@ public class UnlockPoint : MonoBehaviour
         if (remainingMoney <= 0) // 돈 없으면 가라
             return;
 
-        bool paid = playerStat.SpendMoney(1); //1원 지불확인
+        bool paid = wallet.SpendMoney(1); //1원 지불확인
 
         if (!paid) //지불 안됐으면 가라
             return;
@@ -97,9 +97,9 @@ public class UnlockPoint : MonoBehaviour
         if (!other.CompareTag("Player"))
             return;
 
-        playerStat = other.GetComponent<PlayerStat>();
+        wallet = other.GetComponent<Wallet>();
 
-        if (playerStat == null)
+        if (wallet == null)
             return;
 
         playerInside = true;
@@ -113,7 +113,7 @@ public class UnlockPoint : MonoBehaviour
             return;
 
         playerInside = false;
-        playerStat = null;
+        wallet = null;
 
         stayTimer = 0f;
         payTimer = 0f;
