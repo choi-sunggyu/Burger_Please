@@ -11,6 +11,10 @@ public class Customer : MonoBehaviour, IBuyer
     [SerializeField] Transform grabPoint;           // 받은 큐브를 쌓을 위치 (Scale 1,1,1)
     [SerializeField] float cubeStackHeight = 0.3f;
 
+    [Header("퇴장")]
+    [SerializeField] float exitRadius = 0.8f;      // 출구에서 이 거리 안이면 퇴장 완료
+    [SerializeField] float maxLeaveTime = 20f;     // 출구에 끝내 닿지 못해도 이 시간이 지나면 제거 (길이 막힌 경우 대비)
+
     [Header("식사 / 지불")]
     [SerializeField] float eatDuration = 5f;
     [SerializeField] GameObject moneyPrefab;
@@ -34,6 +38,8 @@ public class Customer : MonoBehaviour, IBuyer
 
     Table targetTable;
     int seatIndex = -1;
+
+    float leaveTimer;
 
     readonly List<Stuff> heldCubes = new List<Stuff>();
 
@@ -100,7 +106,9 @@ public class Customer : MonoBehaviour, IBuyer
                 break; // 코루틴이 처리
 
             case CustomerState.Leaving:
-                if (mover.HasArrived()) Destroy(gameObject);
+                leaveTimer += Time.deltaTime;
+                if (mover.HasArrived() || IsNearExit() || leaveTimer > maxLeaveTime)
+                    Destroy(gameObject);
                 break;
         }
     }
@@ -130,9 +138,18 @@ public class Customer : MonoBehaviour, IBuyer
                 break;
 
             case CustomerState.Leaving:
+                leaveTimer = 0f;
                 mover.MoveTo(exitPoint.position);
                 break;
         }
+    }
+
+    // 높이는 무시하고 바닥 평면 거리로 출구 도착 판정
+    bool IsNearExit()
+    {
+        Vector3 d = exitPoint.position - transform.position;
+        d.y = 0f;
+        return d.sqrMagnitude <= exitRadius * exitRadius;
     }
 
     void TryGoToTable()
@@ -163,7 +180,6 @@ public class Customer : MonoBehaviour, IBuyer
 
         targetTable.PlaceTip(moneyPrefab);   // 쌓는 위치는 Table이 결정
         targetTable.PlaceTrash(trashPrefab);
-        Instantiate(trashPrefab, targetTable.transform.position + Vector3.up * 0.5f, Quaternion.identity);
     }
 
     // ───── 정리 ─────

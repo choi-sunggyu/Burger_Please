@@ -14,7 +14,6 @@ public class SellingAction : MonoBehaviour
     [Header("결제")]
     [SerializeField] GameObject moneyPrefab;
     [SerializeField] Transform moneyPoint;        // Scale 1,1,1
-    [SerializeField] float moneyStackHeight = 0.15f;
 
     IBuyerQueue queue;
     int staffInside;
@@ -47,11 +46,8 @@ public class SellingAction : MonoBehaviour
 
     void Pay(int count)
     {
-        for (int i = 0; i < count; i++)
-        {
-            Vector3 pos = moneyPoint.position + Vector3.up * moneyStackHeight * moneyPoint.childCount;
-            Instantiate(moneyPrefab, pos, Quaternion.identity, moneyPoint);
-        }
+        MoneyPile pile = MoneyPile.On(moneyPoint);
+        for (int i = 0; i < count; i++) pile.Add(moneyPrefab);
     }
 
     bool IsStaff(Collider other) => other.GetComponentInParent<Carry>() != null;

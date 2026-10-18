@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.AI;
 
 public class EmployeeSpawner : MonoBehaviour
 {
@@ -14,7 +15,15 @@ public class EmployeeSpawner : MonoBehaviour
 
     public Employee Hire(JobRole role)
     {
-        Employee e = Instantiate(employeePrefab, spawnPoint.position, spawnPoint.rotation);
+        Vector3 pos = spawnPoint.position;
+
+        // 스폰 지점 근처(3m 이내)에서 가장 가까운 NavMesh 위의 점에 생성 (공중/벽 속에 생성되는 것 방지)
+        if (NavMesh.SamplePosition(pos, out NavMeshHit hit, 3f, NavMesh.AllAreas))
+            pos = hit.position;
+        else
+            Debug.LogWarning($"[EmployeeSpawner] 스폰 지점 근처에 NavMesh가 없습니다: {pos}", spawnPoint);
+
+        Employee e = Instantiate(employeePrefab, pos, spawnPoint.rotation);
         e.Init(board, role);
         Tint(e, role);
         return e;

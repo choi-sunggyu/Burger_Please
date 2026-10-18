@@ -11,8 +11,13 @@ public class JobBoard : MonoBehaviour
 
     public bool AllHands => allHands;
 
-    public void Register(IJob job)   { if (!jobs.Contains(job)) jobs.Add(job); }
-    public void Unregister(IJob job) { jobs.Remove(job); claims.Remove(job); }
+    public void Register(IJob job) { if (!jobs.Contains(job)) jobs.Add(job); }
+
+    public void Unregister(IJob job)
+    {
+        jobs.Remove(job);
+        if (claims.Remove(job)) job.OnReleased();
+    }
 
     // UI Toggle의 OnValueChanged(bool)에 연결
     public void SetAllHands(bool on) => allHands = on;
@@ -31,6 +36,7 @@ public class JobBoard : MonoBehaviour
             if (!candidate.IsStillNeeded) continue;         // 지금은 할 필요 없음
 
             claims[candidate] = worker;                     // 확인과 동시에 차지
+            candidate.OnAssigned(worker);
             job = candidate;
             return true;
         }
@@ -41,6 +47,6 @@ public class JobBoard : MonoBehaviour
 
     public void Release(IJob job)
     {
-        if (job != null) claims.Remove(job);
+        if (job != null && claims.Remove(job)) job.OnReleased();   // 두 번 반납돼도 OnReleased는 한 번만
     }
 }

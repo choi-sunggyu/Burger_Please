@@ -16,6 +16,7 @@ public class CubeSpot : MonoBehaviour, IStuffReceiver
     private readonly List<Stuff> cubePacks = new List<Stuff>();
 
     public int Count => cubes.Count;
+    public StuffType AcceptType => acceptType;
     private int Capacity => columns * rows * maxLayers;
 
     private void Awake()

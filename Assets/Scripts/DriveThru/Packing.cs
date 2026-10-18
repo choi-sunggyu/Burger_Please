@@ -13,6 +13,13 @@ public class Packing : MonoBehaviour
     [SerializeField] float packInterval = 0.5f;
     [SerializeField] float packStackHeight = 0.4f;
 
+    public Transform PackTable => packTable;
+
+    // 지금 포장할 수 있나 (재료 충분 + 포장대에 자리 있음) → PackJob이 사용
+    public bool CanPack => cubeSpot != null && packTable != null
+                           && cubeSpot.Count >= cubesPerPack
+                           && packTable.childCount < maxPacksOnTable;
+
     readonly HashSet<Collider> staff = new HashSet<Collider>();
     float timer;
 
@@ -31,8 +38,7 @@ public class Packing : MonoBehaviour
         if (timer < packInterval) return;
 
         if (!HasStaff) return;
-        if (cubeSpot.Count < cubesPerPack) return;               // 재료 부족
-        if (packTable.childCount >= maxPacksOnTable) return;     // 포장대가 꽉 참
+        if (!CanPack) return;                                    // 재료 부족 또는 포장대가 꽉 참
 
         for (int i = 0; i < cubesPerPack; i++)
         {

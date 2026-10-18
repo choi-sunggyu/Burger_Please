@@ -5,12 +5,12 @@ public class Table : MonoBehaviour
     [SerializeField] Transform[] seatPoints;     // 자리 수만큼 (업그레이드로 늘어날 수 있음)
     [SerializeField] Transform tipPoint;         // 팁이 쌓이는 곳 (테이블 옆 한 곳, Scale 1,1,1)
     [SerializeField] Transform trashPoint;
-    [SerializeField] float moneyStackHeight = 0.15f;
     [SerializeField] float trashStackHeight = 0.2f;
 
     bool[] occupied;
 
     public bool IsFull => System.Array.IndexOf(occupied, false) < 0;
+    public Transform TrashPoint => trashPoint;           // CleanTableJob이 쓰레기를 주우러 오는 곳
     public bool IsDirty => trashPoint.childCount > 0;   // 치우지 않은 쓰레기가 있나
 
     void Awake()
@@ -44,11 +44,10 @@ public class Table : MonoBehaviour
 
     public Transform GetSeat(int seat) => seatPoints[seat];
 
-    // 손님이 남긴 돈을 팁 위치에 위로 쌓기
+    // 손님이 남긴 돈을 팁 위치에 쌓기 (쌓는 모양은 MoneyPile이 결정)
     public void PlaceTip(GameObject moneyPrefab)
     {
-        Vector3 offset = Vector3.up * moneyStackHeight * tipPoint.childCount;
-        Instantiate(moneyPrefab, tipPoint.position + offset, Quaternion.identity, tipPoint);
+        MoneyPile.On(tipPoint).Add(moneyPrefab);
     }
 
     public void PlaceTrash(GameObject trashPrefab)

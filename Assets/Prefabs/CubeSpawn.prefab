@@ -10,13 +10,14 @@ GameObject:
   m_Component:
   - component: {fileID: 3328967751514733874}
   - component: {fileID: 3716036070963492946}
+  - component: {fileID: 5710382060778253872}
   m_Layer: 0
   m_Name: CubeSpawn
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &3328967751514733874
 Transform:
   m_ObjectHideFlags: 0
@@ -52,6 +53,24 @@ MonoBehaviour:
   columns: 2
   layers: 2
   cellSize: {x: 0.4, y: 0.3}
+--- !u!114 &5710382060778253872
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6427871486539766733}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 581c8789b017adb48a5537dd2660436d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::DeliverCubeJob
+  board: {fileID: 0}
+  startPoint: {fileID: 6676344919383368359}
+  itemType: 0
+  endPoints:
+  - {fileID: 0}
+  - {fileID: 0}
 --- !u!1 &7408520385909968867
 GameObject:
   m_ObjectHideFlags: 0

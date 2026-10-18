@@ -15,6 +15,8 @@ public class CubeSpawn : MonoBehaviour
 
     private float timer = 0f;
 
+    public Transform SpawnPoint => cubeSpawnPoint;         // DeliverCubeJob이 큐브를 가지러 오는 곳
+
     private int MaxCubeCount => columns * layers;          // 2 x 2 = 4
     private int CurrentCount => cubeSpawnPoint.childCount; // 남아있는 큐브 수 = 자식 수
     public bool IsFull => CurrentCount >= MaxCubeCount;    // 나중에 "MAX" 표시용

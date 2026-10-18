@@ -44,6 +44,7 @@ GameObject:
   - component: {fileID: 5427013549536640029}
   - component: {fileID: 4799724415378265053}
   - component: {fileID: 7111137240625097679}
+  - component: {fileID: 3536292209621426457}
   m_Layer: 0
   m_Name: Table
   m_TagString: Untagged
@@ -169,6 +170,22 @@ MonoBehaviour:
   tipPoint: {fileID: 6341731760923635940}
   trashPoint: {fileID: 4163634399543963162}
   moneyStackHeight: 0.15
+  trashStackHeight: 0.2
+--- !u!114 &3536292209621426457
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1073418354984850188}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 45d915461a2b67142b099c8aadc0023b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::CleanTableJob
+  board: {fileID: 0}
+  trashPoint: {fileID: 4163634399543963162}
+  trashBox: {fileID: 0}
 --- !u!1 &1267774377346361578
 GameObject:
   m_ObjectHideFlags: 0

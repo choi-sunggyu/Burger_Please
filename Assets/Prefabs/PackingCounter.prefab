@@ -137,7 +137,7 @@ Transform:
   m_GameObject: {fileID: 3026337718487026511}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -0, y: 0.63, z: 0.7}
+  m_LocalPosition: {x: -0, y: 0.63, z: 0.93}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -152,6 +152,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 8356486383264454360}
+  - component: {fileID: 298117137904671881}
   m_Layer: 0
   m_Name: PackingCounter
   m_TagString: Untagged
@@ -179,6 +180,23 @@ Transform:
   - {fileID: 9168584987709210159}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 90, z: 0}
+--- !u!114 &298117137904671881
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4401938997642231647}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 581c8789b017adb48a5537dd2660436d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::DeliverCubeJob
+  board: {fileID: 0}
+  startPoint: {fileID: 1508014816155867256}
+  itemType: 3
+  endPoints:
+  - {fileID: 0}
 --- !u!1 &4595912700002404117
 GameObject:
   m_ObjectHideFlags: 0
@@ -303,6 +321,7 @@ GameObject:
   - component: {fileID: 508639030289971286}
   - component: {fileID: 7204763019278088692}
   - component: {fileID: 5495167542787071378}
+  - component: {fileID: 4148501558506116721}
   m_Layer: 0
   m_Name: PackingPoint
   m_TagString: Untagged
@@ -424,6 +443,21 @@ MonoBehaviour:
   maxPacksOnTable: 4
   packInterval: 0.5
   packStackHeight: 0.4
+--- !u!114 &4148501558506116721
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5143440857086705153}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 33715d6d68b108d4bbcffe60d9d310f1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PackJob
+  board: {fileID: 0}
+  standPoint: {fileID: 7748691265348276505}
+  packing: {fileID: 5495167542787071378}
 --- !u!1001 &8943539362657516059
 PrefabInstance:
   m_ObjectHideFlags: 0
