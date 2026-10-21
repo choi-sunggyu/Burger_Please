@@ -13,6 +13,7 @@ GameObject:
   - component: {fileID: 2683850124529721089}
   - component: {fileID: 240589851802712631}
   - component: {fileID: 1914029748142927685}
+  - component: {fileID: 6556095370778356789}
   m_Layer: 0
   m_Name: Trash
   m_TagString: Stuff
@@ -125,3 +126,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 426f420a953f1f64c886311ddde87bd4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Trash
+--- !u!114 &6556095370778356789
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2039126837486886584}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 87b188ab19edad94ea5b3c10ba3378f6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::SpawnPopEffect

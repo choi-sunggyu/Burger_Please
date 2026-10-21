@@ -12,13 +12,13 @@ public class FirebaseManager : MonoBehaviour
             {
                 if (task.IsFaulted || task.IsCanceled)
                 {
-                    Debug.LogError("Firebase ÃÊ±âÈ­ ÀÛ¾÷ ½ÇÆĞ");
+                    Debug.LogError("Firebase ì´ˆê¸°í™” ì‘ì—… ì‹¤íŒ¨");
                     return;
                 }
 
                 if (task.Result == DependencyStatus.Available)
                 {
-                    Debug.Log("Firebase ÃÊ±âÈ­ ¼º°ø!");
+                    Debug.Log("Firebase ì´ˆê¸°í™” ì„±ê³µ!");
 
                     FirebaseMessaging.RegistrationReceived
                         += OnRegistrationReceived;
@@ -31,7 +31,7 @@ public class FirebaseManager : MonoBehaviour
                 else
                 {
                     Debug.LogError(
-                        "Firebase ÀÇÁ¸¼º ¿À·ù: " + task.Result);
+                        "Firebase ì˜ì¡´ì„± ì˜¤ë¥˜: " + task.Result);
                 }
             });
     }
@@ -46,14 +46,14 @@ public class FirebaseManager : MonoBehaviour
         }
         catch (System.Exception ex)
         {
-            Debug.LogError("FCM ÅäÅ« ¹ß±Ş ½ÇÆĞ: " + ex.Message);
+            Debug.LogError("FCM í† í° ë°œê¸‰ ì‹¤íŒ¨: " + ex.Message);
         }
     }
 
     private void OnMessageReceived(
         object sender, MessageReceivedEventArgs e)
     {
-        Debug.Log("¸Ş½ÃÁö ¼ö½Å: " +
+        Debug.Log("ë©”ì‹œì§€ ìˆ˜ì‹ : " +
             e.Message.Notification?.Title);
     }
 
@@ -75,7 +75,7 @@ public class FirebaseManager : MonoBehaviour
         }
         catch (System.Exception e)
         {
-            Debug.LogError("FCM ÅäÅ« ¹ß±Ş ½ÇÆĞ: " + e.Message);
+            Debug.LogError("FCM í† í° ë°œê¸‰ ì‹¤íŒ¨: " + e.Message);
         }
     }
 }

@@ -1,7 +1,10 @@
+
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 namespace AstronautPlayer
 {
+    [RequireComponent(typeof(CharacterController))]
     public class AstronautPlayer : MonoBehaviour
     {
         private Animator anim;
@@ -17,33 +20,34 @@ namespace AstronautPlayer
 
         private float verticalVelocity;
 
-        void Start()
+        private void Start()
         {
             controller = GetComponent<CharacterController>();
             anim = GetComponentInChildren<Animator>();
 
-            if (cameraTransform == null)
+            if (cameraTransform == null && Camera.main != null)
                 cameraTransform = Camera.main.transform;
         }
 
-        void Update()
+        private void Update()
         {
             Move();
         }
 
         private void Move()
         {
-            float horizontal = Input.GetAxisRaw("Horizontal");
-            float vertical = Input.GetAxisRaw("Vertical");
+            // New Input System
+            Vector2 input = ReadMovementInput();
 
-            Vector3 inputDirection = new Vector3(horizontal, 0f, vertical);
+            Vector3 inputDirection =
+                new Vector3(input.x, 0f, input.y);
 
-            // 입력이 있는지 확인
             bool isMoving = inputDirection.sqrMagnitude > 0.01f;
 
-            anim.SetInteger("AnimationPar", isMoving ? 1 : 0);
+            if (anim != null)
+                anim.SetInteger("AnimationPar", isMoving ? 1 : 0);
 
-            if (isMoving)
+            if (isMoving && cameraTransform != null)
             {
                 inputDirection.Normalize();
 
@@ -57,12 +61,14 @@ namespace AstronautPlayer
                 cameraForward.Normalize();
                 cameraRight.Normalize();
 
-                // 카메라 기준 이동 방향
+                // 카메라 기준 이동
                 Vector3 moveDirection =
                     cameraForward * inputDirection.z +
                     cameraRight * inputDirection.x;
 
-                // 이동 방향을 바라보게 함
+                moveDirection.Normalize();
+
+                // 이동 방향 회전
                 Quaternion targetRotation =
                     Quaternion.LookRotation(moveDirection);
 
@@ -73,7 +79,9 @@ namespace AstronautPlayer
                 );
 
                 // 이동
-                controller.Move(moveDirection * speed * Time.deltaTime);
+                controller.Move(
+                    moveDirection * speed * Time.deltaTime
+                );
             }
 
             // 중력
@@ -89,6 +97,29 @@ namespace AstronautPlayer
             controller.Move(
                 Vector3.up * verticalVelocity * Time.deltaTime
             );
+        }
+
+        private Vector2 ReadMovementInput()
+        {
+            if (Keyboard.current == null)
+                return Vector2.zero;
+
+            float horizontal = 0f;
+            float vertical = 0f;
+
+            if (Keyboard.current.aKey.isPressed)
+                horizontal -= 1f;
+
+            if (Keyboard.current.dKey.isPressed)
+                horizontal += 1f;
+
+            if (Keyboard.current.wKey.isPressed)
+                vertical += 1f;
+
+            if (Keyboard.current.sKey.isPressed)
+                vertical -= 1f;
+
+            return new Vector2(horizontal, vertical);
         }
     }
 }
