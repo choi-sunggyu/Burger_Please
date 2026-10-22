@@ -51,20 +51,12 @@ namespace AstronautPlayer
             {
                 inputDirection.Normalize();
 
-                // 카메라의 수평 방향만 사용
-                Vector3 cameraForward = cameraTransform.forward;
-                Vector3 cameraRight = cameraTransform.right;
-
-                cameraForward.y = 0f;
-                cameraRight.y = 0f;
-
-                cameraForward.Normalize();
-                cameraRight.Normalize();
+                // 카메라의 고정 요(수평 각도)만 사용 → 피치와 무관하게 조작 방향 일정
+                Quaternion yawRotation =
+                    Quaternion.Euler(0f, cameraTransform.eulerAngles.y, 0f);
 
                 // 카메라 기준 이동
-                Vector3 moveDirection =
-                    cameraForward * inputDirection.z +
-                    cameraRight * inputDirection.x;
+                Vector3 moveDirection = yawRotation * inputDirection;
 
                 moveDirection.Normalize();
 

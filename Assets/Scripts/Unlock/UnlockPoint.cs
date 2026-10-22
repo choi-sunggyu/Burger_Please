@@ -3,6 +3,9 @@ using TMPro;
 
 public class UnlockPoint : MonoBehaviour
 {
+    [Header("PreRequiredMoney")]
+    [SerializeField] private int preMoney = 50;
+
     [Header("Unlock")]
     [SerializeField] private int requiredMoney = 100;
     [SerializeField] private GameObject unlockTarget;

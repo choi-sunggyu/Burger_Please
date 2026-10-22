@@ -175,10 +175,16 @@ public class Customer : MonoBehaviour, IBuyer
 
     void LeaveStuff()
     {
-        foreach (var cube in heldCubes) Destroy(cube.gameObject);
+        foreach (var cube in heldCubes)
+        {
+            if (cube == null) continue;
+
+            Destroy(cube.gameObject);
+        }
+
         heldCubes.Clear();
 
-        targetTable.PlaceTip(moneyPrefab);   // 쌓는 위치는 Table이 결정
+        targetTable.PlaceTip(moneyPrefab);
         targetTable.PlaceTrash(trashPrefab);
     }
 

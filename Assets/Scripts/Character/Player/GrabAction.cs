@@ -15,10 +15,32 @@ public class GrabAction : MonoBehaviour
     private bool useFilter;
     private StuffType? allowedType;
 
-    public int Count => holding.Count;
-    public bool IsEmpty => holding.Count == 0;
-    public StuffType HeldType => holding[0].Type; // IsEmpty 일 때는 호출하지 말 것
-    public bool IsFull => !IsEmpty && HeldType != StuffType.Trash && holding.Count >= carrierStat.Capacity; // 쓰레기는 무제한
+    public int Count
+    {
+        get
+        {
+            CleanupHolding();
+            return holding.Count;
+        }
+    }
+    public bool IsEmpty => Count == 0;
+    public bool IsFull =>
+        !IsEmpty &&
+        HeldType != StuffType.Trash &&
+        Count >= carrierStat.Capacity;
+    public StuffType HeldType
+    {
+        get
+        {
+            CleanupHolding();
+
+            if (holding.Count == 0)
+                throw new System.InvalidOperationException(
+                    "현재 들고 있는 물건이 없습니다.");
+
+            return holding[0].Type;
+        }
+    }
 
     private void Awake()
     {
@@ -105,14 +127,22 @@ public class GrabAction : MonoBehaviour
     // PutAction 이 맨 위 물건을 하나 꺼내 갈 때 사용
     public Stuff TakeTop()
     {
-        if (IsEmpty) return null;
+        // 파괴된 오브젝트의 참조 정리
+        holding.RemoveAll(stuff => stuff == null);
+
+        if (IsEmpty)
+            return null;
 
         int last = holding.Count - 1;
         Stuff top = holding[last];
+
         holding.RemoveAt(last);
+
         top.transform.SetParent(null);
 
-        if (IsEmpty) RetryNearby(); // 손이 비면, 범위 안에서 못 주웠던 물건을 다시 시도
+        if (IsEmpty)
+            RetryNearby();
+
         return top;
     }
 
@@ -125,5 +155,10 @@ public class GrabAction : MonoBehaviour
         {
             if (s != null) Grab(s);
         }
+    }
+
+    private void CleanupHolding()
+    {
+        holding.RemoveAll(stuff => stuff == null);
     }
 }

@@ -39,9 +39,14 @@ public class PutAction : MonoBehaviour
 
         timer -= Time.deltaTime;
         if (timer > 0f) return;
-        timer = putInterval;
 
         Stuff top = grab.TakeTop(); // 제일 위에 있는 것 내려놓기
-        currentReceiver.Receive(top); // 내려놓기
+
+        // 유효한 오브젝트가 없으면 전달하지 않음
+        if (top == null)
+            return;
+
+        timer = putInterval;
+        currentReceiver.Receive(top);
     }
 }
