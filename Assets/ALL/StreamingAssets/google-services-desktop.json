@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "442997818772",
+    "project_id": "project-bp-6f7a3",
+    "storage_bucket": "project-bp-6f7a3.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:442997818772:android:4c9b495684d1a1455c3b81",
+        "android_client_info": {
+          "package_name": "com.UnityTechnologies.com.unity.template.urpblank"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBknWZnEr0qVJ7IsTRCFyzA2hf616665BM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

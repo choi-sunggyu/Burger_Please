@@ -10,6 +10,7 @@ public class SpawnManager : MonoBehaviour
     public void Spawn()
     {
         Vector3 position = spawnPoint.position;
+        Time time;
 
         // 1. 연기 생성
         ParticleSystem smoke =
@@ -27,7 +28,7 @@ public class SpawnManager : MonoBehaviour
         // 3. 등장 애니메이션
         if (spawnedObject.TryGetComponent(out SpawnPopEffect popEffect))
         {
-            popEffect.Play();
+            popEffect.Play();   
         }
     }
 
