@@ -311,6 +311,60 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &549679202
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 549679204}
+  - component: {fileID: 549679203}
+  m_Layer: 0
+  m_Name: WorkerInteractionManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &549679203
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 549679202}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1d77eda0ca5eeda48a4bcd3b33aaba12, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::WorkerInteractionManager
+  detectionDistance: 2
+  separationDistance: 3
+  scanInterval: 0.25
+  talkDuration: 2
+  cooldown: 5
+  pairs:
+  - workerA: {fileID: 1459577398}
+    workerB: {fileID: 1620288549}
+    lineA: "\uBC30\uACE0\uD504\uB2E4"
+    lineB: "\uC9DC\uC7A5\uBA74\u3131?"
+--- !u!4 &549679204
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 549679202}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -0.20393, y: 0, z: -5.56128}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &905055508
 GameObject:
   m_ObjectHideFlags: 0
@@ -499,7 +553,7 @@ Transform:
   m_GameObject: {fileID: 1067855212}
   serializedVersion: 2
   m_LocalRotation: {x: 0.13065669, y: -0, z: -0, w: 0.99142766}
-  m_LocalPosition: {x: 0, y: 1.24, z: -10.09}
+  m_LocalPosition: {x: 0, y: 6.56, z: -19.33}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -710,6 +764,17 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 429b84ead351c4c41967d58dc36dd126, type: 3}
+--- !u!114 &1459577398 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 807053590064174073, guid: 429b84ead351c4c41967d58dc36dd126, type: 3}
+  m_PrefabInstance: {fileID: 1459577397}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b5407c4cb69fea441b128bc5c19817f2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::WorkerInteraction
 --- !u!1001 &1620288548
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -767,6 +832,17 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 429b84ead351c4c41967d58dc36dd126, type: 3}
+--- !u!114 &1620288549 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 807053590064174073, guid: 429b84ead351c4c41967d58dc36dd126, type: 3}
+  m_PrefabInstance: {fileID: 1620288548}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b5407c4cb69fea441b128bc5c19817f2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::WorkerInteraction
 --- !u!1 &1962194861
 GameObject:
   m_ObjectHideFlags: 0
@@ -1103,3 +1179,4 @@ SceneRoots:
   - {fileID: 1414115758}
   - {fileID: 2119832301}
   - {fileID: 27020706}
+  - {fileID: 549679204}
