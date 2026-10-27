@@ -1,7 +1,7 @@
 using System.Collections;
 using UnityEngine;
 
-// TashBox 프리팹의 트리거 영역(DropArea)에 붙이는 스크립트
+// TashBox 프리팹의 영역(DropArea)에 붙이는 스크립트. 운반자가 이 콜라이더 근처(거리)에 오면 ThrowTrash 가 버림
 // 받은 쓰레기를 포물선으로 dropPoint 까지 날려 보낸 뒤 파괴한다.
 public class TrashBox : MonoBehaviour
 {
@@ -13,6 +13,10 @@ public class TrashBox : MonoBehaviour
     {
         if (dropPoint == null) dropPoint = transform;
     }
+
+    // ThrowTrash 가 거리로 찾을 수 있도록 등록
+    private void OnEnable() => Registry<TrashBox>.Add(this);
+    private void OnDisable() => Registry<TrashBox>.Remove(this);
 
     public void Receive(Stuff trash)
     {

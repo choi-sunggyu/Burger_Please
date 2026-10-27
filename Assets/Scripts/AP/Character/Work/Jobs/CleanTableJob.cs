@@ -1,9 +1,9 @@
 using UnityEngine;
 
 // 테이블 청소
-// - 쓰레기가 생기면 그 위치로 이동 → 콜라이더 충돌로 자동 수거 (Carry/GrabAction)
+// - 쓰레기가 생기면 그 위치로 이동 → 가까워지면 자동 수거 (Carry/GrabAction, 거리 확인)
 // - 다 주웠으면 TrashBox로 이동 → 자동으로 버림 (ThrowTrash)
-// - 할 일이 없으면 제자리에서 대기 (Employee의 Idle)
+// - 할 일이 없으면 근처를 돌아다님 (Employee의 Idle)
 // "쓰레기 감시자"는 따로 만들지 않음: 테이블마다 이 일이 붙어 있고, JobBoard가 IsStillNeeded로 감시함
 //
 // [붙이는 곳] Table 프리팹 루트 → trashPoint 자동, trashBox는 씬의 TrashBox 자동

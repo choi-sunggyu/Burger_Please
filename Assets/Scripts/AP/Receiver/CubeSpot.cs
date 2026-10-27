@@ -89,6 +89,10 @@ public class CubeSpot : MonoBehaviour, IStuffReceiver
         return null;
     }
 
+    // Carry 가 거리로 찾을 수 있도록 등록
+    private void OnEnable() => Registry<IStuffReceiver>.Add(this);
+    private void OnDisable() => Registry<IStuffReceiver>.Remove(this);
+
     private void CleanupDestroyedCubes()
     {
         cubes.RemoveAll(stuff => stuff == null);

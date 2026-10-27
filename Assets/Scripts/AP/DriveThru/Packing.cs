@@ -1,8 +1,7 @@
-using System.Collections.Generic;
 using UnityEngine;
 
-// PackingPoint(Is Trigger)에 부착
-// 플레이어/직원이 서 있고 재료 큐브가 충분하면, 큐브 N개 → CubePack 1개를 포장대에 올림
+// PackingPoint에 부착
+// 플레이어/직원이 근처에 서 있고(거리 확인, 트리거 충돌 X) 재료 큐브가 충분하면, 큐브 N개 → CubePack 1개를 포장대에 올림
 public class Packing : MonoBehaviour
 {
     [SerializeField] CubeSpot cubeSpot;          // 재료 큐브가 쌓인 곳 (DriveThru CubeZone)
@@ -20,15 +19,16 @@ public class Packing : MonoBehaviour
                            && cubeSpot.Count >= cubesPerPack
                            && packTable.childCount < maxPacksOnTable;
 
-    readonly HashSet<Collider> staff = new HashSet<Collider>();
     float timer;
 
+    // 운반자 중 누구라도 감지 반경 안에 있나
     bool HasStaff
     {
         get
         {
-            staff.RemoveWhere(c => c == null || !c.enabled || !c.gameObject.activeInHierarchy);
-            return staff.Count > 0;
+            foreach (Carry carry in Registry<Carry>.Items)
+                if (carry.IsNear(this)) return true;
+            return false;
         }
     }
 
@@ -50,11 +50,4 @@ public class Packing : MonoBehaviour
         Instantiate(packPrefab, pos, packTable.rotation, packTable);
         timer = 0f;
     }
-
-    void OnTriggerEnter(Collider other)
-    {
-        if (other.GetComponentInParent<Carry>() != null) staff.Add(other);
-    }
-
-    void OnTriggerExit(Collider other) => staff.Remove(other);
 }

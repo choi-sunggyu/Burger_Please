@@ -23,7 +23,7 @@ public class PutAction : MonoBehaviour
 
     private void EnterReceiver(IStuffReceiver receiver)
     {
-        currentReceiver = receiver; //콜라이더 충돌로 현재 내려놓을 수 있는 곳을 기억
+        currentReceiver = receiver; // Carry 가 거리로 찾은, 현재 내려놓을 수 있는 곳을 기억
         timer = 0f;
     }
 

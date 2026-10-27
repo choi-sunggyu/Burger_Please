@@ -1,7 +1,8 @@
 using UnityEngine;
 using UnityEngine.Serialization;
 
-// SellingPoint(Is Trigger)에 부착. 매장 카운터 / 드라이브 스루 창구 공용
+// SellingPoint에 부착. 매장 카운터 / 드라이브 스루 창구 공용
+// 운반자(플레이어/직원)가 이 오브젝트(콜라이더가 있으면 그 영역) 근처에 있으면 판매 (트리거 충돌 대신 거리 확인)
 public class SellingAction : MonoBehaviour
 {
     [Header("판매")]
@@ -16,7 +17,6 @@ public class SellingAction : MonoBehaviour
     [SerializeField] Transform moneyPoint;        // Scale 1,1,1
 
     IBuyerQueue queue;
-    int staffInside;
     float timer;
 
     void Awake()
@@ -30,7 +30,7 @@ public class SellingAction : MonoBehaviour
     {
         timer += Time.deltaTime;
         if (timer < giveInterval) return;
-        if (queue == null || staffInside == 0) return;
+        if (queue == null || !HasStaff()) return;
 
         IBuyer buyer = queue.Front;
         if (buyer == null || !buyer.CanReceive) return;   // 오는 중이거나 주문이 끝났으면 X
@@ -50,7 +50,11 @@ public class SellingAction : MonoBehaviour
         for (int i = 0; i < count; i++) pile.Add(moneyPrefab);
     }
 
-    bool IsStaff(Collider other) => other.GetComponentInParent<Carry>() != null;
-    void OnTriggerEnter(Collider other) { if (IsStaff(other)) staffInside++; }
-    void OnTriggerExit(Collider other)  { if (IsStaff(other)) staffInside = Mathf.Max(0, staffInside - 1); }
+    // 운반자 중 누구라도 감지 반경 안에 있나
+    bool HasStaff()
+    {
+        foreach (Carry carry in Registry<Carry>.Items)
+            if (carry.IsNear(this)) return true;
+        return false;
+    }
 }

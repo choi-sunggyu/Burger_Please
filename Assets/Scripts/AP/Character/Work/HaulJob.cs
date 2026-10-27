@@ -1,7 +1,7 @@
 using UnityEngine;
 
 // "더미(Source)에서 줍고 → 놓을 곳(Drop)에 내려놓기"를 반복하는 일의 공통 흐름
-// 실제 줍기/내려놓기/버리기는 직원의 Carry·GrabAction·PutAction·ThrowTrash가 트리거로 처리하고,
+// 실제 줍기/내려놓기/버리기는 직원의 Carry·GrabAction·PutAction·ThrowTrash가 거리 확인으로 처리하고,
 // 이 클래스는 "지금 어디로 가야 하는가"만 결정한다.
 // 자식 클래스: DeliverCubeJob(큐브/큐브팩 운반), CleanTableJob(쓰레기 청소)
 public abstract class HaulJob : JobBase
