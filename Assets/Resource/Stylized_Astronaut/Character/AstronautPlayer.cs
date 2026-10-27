@@ -18,6 +18,9 @@ namespace AstronautPlayer
         [Header("Camera")]
         public Transform cameraTransform;
 
+        [Header("Touch")]
+        [SerializeField] private TouchJoystick joystick;   // 비워두면 씬에서 찾음
+
         private float verticalVelocity;
 
         private void Start()
@@ -27,6 +30,9 @@ namespace AstronautPlayer
 
             if (cameraTransform == null && Camera.main != null)
                 cameraTransform = Camera.main.transform;
+
+            if (joystick == null)
+                joystick = FindFirstObjectByType<TouchJoystick>();
         }
 
         private void Update()
@@ -49,6 +55,9 @@ namespace AstronautPlayer
 
             if (isMoving && cameraTransform != null)
             {
+                // 조이스틱은 드래그 정도만큼 속도 조절 (키보드는 항상 1)
+                float strength = Mathf.Clamp01(inputDirection.magnitude);
+
                 inputDirection.Normalize();
 
                 // 카메라의 고정 요(수평 각도)만 사용 → 피치와 무관하게 조작 방향 일정
@@ -72,7 +81,7 @@ namespace AstronautPlayer
 
                 // 이동
                 controller.Move(
-                    moveDirection * speed * Time.deltaTime
+                    moveDirection * speed * strength * Time.deltaTime
                 );
             }
 
@@ -93,6 +102,10 @@ namespace AstronautPlayer
 
         private Vector2 ReadMovementInput()
         {
+            // 터치 조이스틱 우선
+            if (joystick != null && joystick.Value != Vector2.zero)
+                return joystick.Value;
+
             if (Keyboard.current == null)
                 return Vector2.zero;
 

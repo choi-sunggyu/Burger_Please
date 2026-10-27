@@ -15,7 +15,14 @@ public class CubeSpot : MonoBehaviour, IStuffReceiver
     private readonly List<Stuff> cubes = new List<Stuff>();
     private readonly List<Stuff> cubePacks = new List<Stuff>();
 
-    public int Count => cubes.Count;
+    public int Count
+    {
+        get
+        {
+            CleanupDestroyedCubes();
+            return cubes.Count;
+        }
+    }
     public StuffType AcceptType => acceptType;
     private int Capacity => columns * rows * maxLayers;
 
@@ -31,7 +38,12 @@ public class CubeSpot : MonoBehaviour, IStuffReceiver
         }
     }
 
-    public bool CanReceive(StuffType type) => type == acceptType && cubes.Count < Capacity;
+    public bool CanReceive(StuffType type)
+    {
+        CleanupDestroyedCubes();
+
+        return type == acceptType && cubes.Count < Capacity;
+    }
 
     public void Receive(Stuff stuff)
     {
@@ -56,11 +68,29 @@ public class CubeSpot : MonoBehaviour, IStuffReceiver
     // 나중에 직원/판매 로직에서 꺼내 갈 때 사용
     public Stuff TakeTop()
     {
-        if (cubes.Count == 0) return null;
-        int last = cubes.Count - 1;
-        Stuff top = cubes[last];
-        cubes.RemoveAt(last);
-        top.transform.SetParent(null);
-        return top;
+        while (cubes.Count > 0)
+        {
+            int last = cubes.Count - 1;
+            Stuff top = cubes[last];
+
+            cubes.RemoveAt(last);
+
+            // 이미 Destroy된 객체는 건너뛰기
+            if (top == null)
+            {
+                Debug.LogWarning("[CubeSpot] Destroy된 Cube 참조 제거");
+                continue;
+            }
+
+            top.transform.SetParent(null);
+            return top;
+        }
+
+        return null;
+    }
+
+    private void CleanupDestroyedCubes()
+    {
+        cubes.RemoveAll(stuff => stuff == null);
     }
 }

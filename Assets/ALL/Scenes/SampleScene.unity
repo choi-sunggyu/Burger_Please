@@ -878,7 +878,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: -0, z: 0}
-  m_LocalScale: {x: 10, y: 1, z: 10}
+  m_LocalScale: {x: 100, y: 1, z: 100}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
@@ -2009,7 +2009,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2188ced6cd42fc848be66c837973e4e6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::CarSpawner
-  carPrefab: {fileID: 2264628658625094723, guid: ca431b4ba0332c344806efc2fd99b2cb, type: 3}
+  carPrefab: {fileID: -5613108321633312782, guid: 85ac88d7c46e0ea4583870a98cc13580, type: 3}
   lane: {fileID: 233879426}
   spawnInterval: 6
   minOrder: 1
@@ -3626,11 +3626,15 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 767100112124422339, guid: ac197399eb6f82043ae19bad8e1dd29c, type: 3}
       propertyPath: distance
-      value: 20
+      value: 25
       objectReference: {fileID: 0}
     - target: {fileID: 767100112124422339, guid: ac197399eb6f82043ae19bad8e1dd29c, type: 3}
       propertyPath: m_Enabled
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 767100112124422339, guid: ac197399eb6f82043ae19bad8e1dd29c, type: 3}
+      propertyPath: maxDistance
+      value: 800
       objectReference: {fileID: 0}
     - target: {fileID: 1542144207012420312, guid: ac197399eb6f82043ae19bad8e1dd29c, type: 3}
       propertyPath: m_Name
@@ -4026,12 +4030,8 @@ SceneRoots:
   - {fileID: 5717374551521357548}
   - {fileID: 1188236330206520555}
   - {fileID: 5860648849678330979}
-  - {fileID: 978195516}
-  - {fileID: 575489325}
   - {fileID: 303050400683477236}
   - {fileID: 7759728301642904377}
-  - {fileID: 52366206}
-  - {fileID: 413174756}
   - {fileID: 4615311342590312347}
   - {fileID: 895969421}
   - {fileID: 1431258691}
@@ -4040,3 +4040,7 @@ SceneRoots:
   - {fileID: 744045719}
   - {fileID: 1214258280}
   - {fileID: 119760509}
+  - {fileID: 52366206}
+  - {fileID: 413174756}
+  - {fileID: 575489325}
+  - {fileID: 978195516}
