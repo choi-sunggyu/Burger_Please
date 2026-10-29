@@ -127,4 +127,10 @@ public class SpeechBubbleUI : MonoBehaviour
             visualRoot.SetActive(visible);
         }
     }
+
+    public void Bind(Transform followTarget, Vector3 offset)
+    {
+        target = followTarget;
+        worldOffset = offset;
+    }
 }

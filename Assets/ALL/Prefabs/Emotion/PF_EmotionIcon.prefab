@@ -86,8 +86,9 @@ GameObject:
   - component: {fileID: 5564755749576500335}
   - component: {fileID: 4037867612755523076}
   - component: {fileID: 5097250531994498174}
+  - component: {fileID: 598646410151717146}
   m_Layer: 5
-  m_Name: EmotionIconUI
+  m_Name: PF_EmotionIcon
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -130,6 +131,23 @@ CanvasGroup:
   m_GameObject: {fileID: 6684162344476604297}
   m_Enabled: 1
   m_Alpha: 1
-  m_Interactable: 1
-  m_BlocksRaycasts: 1
+  m_Interactable: 0
+  m_BlocksRaycasts: 0
   m_IgnoreParentGroups: 0
+--- !u!114 &598646410151717146
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6684162344476604297}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 95ac702af4deb7140ba4a9179059f110, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::EmotionIconUI
+  iconImage: {fileID: 3015016782470507993}
+  screenOffset: {x: 0, y: 20}
+  popSpeed: 0.77
+  bounceHeight: 20
+  restingHeight: 10
