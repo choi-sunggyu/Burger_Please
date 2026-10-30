@@ -24,6 +24,7 @@ public class GrabAction : MonoBehaviour
         }
     }
     public bool IsEmpty => Count == 0;
+    public bool IsHolding => !IsEmpty; // 물건을 하나라도 들고 있는 상태 (Hold 애니메이션용)
     public bool IsFull =>
         !IsEmpty &&
         HeldType != StuffType.Trash &&
