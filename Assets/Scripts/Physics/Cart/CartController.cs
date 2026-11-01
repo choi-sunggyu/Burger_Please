@@ -27,11 +27,18 @@ public class CartController : MonoBehaviour
     private float maxSpeed = 1f, attachTimer;
 
     public bool IsGrabbed { get; private set; }
+    public CartCargo Cargo { get; private set; } // 짐칸 (없으면 null → 카트에 물건을 싣지 않음)
+
+    // 카트가 향하는 수평 방향 (손잡이 → 앞). 에디터(기즈모)에서도 쓸 수 있게 자식 위치로 바로 계산
+    public Vector3 Forward => frontPivot != null && handlePoint != null
+        ? Vector3.ProjectOnPlane(frontPivot.position - handlePoint.position, Vector3.up).normalized
+        : Vector3.ProjectOnPlane(transform.forward, Vector3.up).normalized;
     public float Speed01 => Mathf.Clamp01(Mathf.Abs(Vector3.Dot(rb.linearVelocity, GetForward(rb.rotation))) / maxSpeed);
 
     private void Awake()
     {
         rb = GetComponent<Rigidbody>();
+        Cargo = GetComponent<CartCargo>();
         rb.interpolation = RigidbodyInterpolation.Interpolate;
         rb.collisionDetectionMode = CollisionDetectionMode.ContinuousSpeculative;
         rb.constraints &= ~RigidbodyConstraints.FreezeRotation; // 회전 제약이 있으면 A/D 회전이 막힌다 (기울기는 FixedUpdate에서 직접 세움)
