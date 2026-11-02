@@ -21,8 +21,11 @@ public class Employee : MonoBehaviour
     public EmployeeState State => state;            // Inspector Debug 모드 확인용
     public GrabAction Hands { get; private set; }   // 손 (Worker 자식의 GrabAction)
 
+    static readonly int WalkHash = Animator.StringToHash("Walk");
+
     JobBoard board;
     NavMover mover;
+    Animator anim;
     EmployeeState state;
     IJob job;            // 지금 맡은 일
     Transform target;    // 지금 가고 있는 / 서 있는 곳
@@ -37,6 +40,7 @@ public class Employee : MonoBehaviour
     void Awake()
     {
         mover = GetComponent<NavMover>();
+        anim = GetComponentInChildren<Animator>();
         Hands = GetComponentInChildren<GrabAction>();
         if (Hands != null) Hands.SetFilter(null);   // 일이 없을 땐 아무것도 줍지 않음
     }
@@ -73,6 +77,9 @@ public class Employee : MonoBehaviour
                 CheckJob();
                 break;
         }
+
+        // 이동 중이면 걷기 (일하러 가든 돌아다니든 실제 속도로 판단)
+        if (anim != null) anim.SetBool(WalkHash, mover.IsMoving);
     }
 
     // 일을 맡았으면 true (씬에 JobBoard가 없으면 항상 false → 돌아다니기만 함)

@@ -8,6 +8,9 @@ public class NavMover : MonoBehaviour
 
     NavMeshAgent agent;
 
+    // 실제로 움직이는 중인가 (걷기 애니메이션용)
+    public bool IsMoving => agent.isOnNavMesh && !agent.isStopped && agent.velocity.sqrMagnitude > 0.01f;
+
     void Awake() => agent = GetComponent<NavMeshAgent>();
 
     public void MoveTo(Vector3 target)
