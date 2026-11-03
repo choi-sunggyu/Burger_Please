@@ -51817,7 +51817,7 @@ MonoBehaviour:
   m_HandleRect: {fileID: 623222164}
   m_Direction: 2
   m_Value: 1
-  m_Size: 0.5795116
+  m_Size: 0.50154954
   m_NumberOfSteps: 0
   m_OnValueChanged:
     m_PersistentCalls:
@@ -107399,10 +107399,10 @@ RectTransform:
   - {fileID: 383192293}
   m_Father: {fileID: 1882056435}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0.5, y: 0.5}
-  m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -169.82118, y: -0.859}
-  m_SizeDelta: {x: 322.3577, y: 363.718}
+  m_AnchorMin: {x: 0, y: 1}
+  m_AnchorMax: {x: 0, y: 1}
+  m_AnchoredPosition: {x: 162, y: -184}
+  m_SizeDelta: {x: 322.3577, y: 363.71802}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &765919124
 MonoBehaviour:
@@ -130195,7 +130195,7 @@ RectTransform:
   m_AnchorMin: {x: 0.5, y: 0}
   m_AnchorMax: {x: 0.5, y: 1}
   m_AnchoredPosition: {x: -152.67804, y: 0}
-  m_SizeDelta: {x: 305.36, y: 263.9105}
+  m_SizeDelta: {x: 305.36, y: 361.4706}
   m_Pivot: {x: 0, y: 1}
 --- !u!1001 &925913591
 PrefabInstance:
@@ -191305,11 +191305,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6041115875140374167, guid: ac197399eb6f82043ae19bad8e1dd29c, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 0.96
+      value: 0.93
       objectReference: {fileID: 0}
     - target: {fileID: 6041115875140374167, guid: ac197399eb6f82043ae19bad8e1dd29c, type: 3}
       propertyPath: m_LocalPosition.z
-      value: 3.454
+      value: -5.19
       objectReference: {fileID: 0}
     - target: {fileID: 6041115875140374167, guid: ac197399eb6f82043ae19bad8e1dd29c, type: 3}
       propertyPath: m_LocalRotation.w
@@ -191383,11 +191383,6 @@ MonoBehaviour:
   maxDistance: 20
   zoomSpeed: 0.01
   angle: 55
---- !u!137 &1384763366 stripped
-SkinnedMeshRenderer:
-  m_CorrespondingSourceObject: {fileID: 564962370326790092, guid: ac197399eb6f82043ae19bad8e1dd29c, type: 3}
-  m_PrefabInstance: {fileID: 1384763362}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &1384966060
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -278256,7 +278251,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1989527937}
-  - component: {fileID: 1989527936}
   m_Layer: 0
   m_Name: ShaderManager
   m_TagString: Untagged
@@ -278264,22 +278258,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &1989527936
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1989527935}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 53ac5fd6234c4484daa6b4c37157ce7d, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::ShaderToggle
-  targetRenderer: {fileID: 1384763366}
-  toonMaterials:
-  - {fileID: 2100000, guid: 02ee56030118d22458173423a76a60c3, type: 2}
-  - {fileID: 2100000, guid: 2d5d7afbfab5fd640ac958124b612f41, type: 2}
 --- !u!4 &1989527937
 Transform:
   m_ObjectHideFlags: 0
