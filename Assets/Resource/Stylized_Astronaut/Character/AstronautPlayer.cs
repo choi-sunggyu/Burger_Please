@@ -49,6 +49,12 @@ namespace AstronautPlayer
             grab = GetComponentInChildren<GrabAction>();
         }
 
+        // 코스튬 교체 후 활성화된 모델의 Animator를 다시 찾는다
+        public void RefreshAnimator()
+        {
+            anim = GetComponentInChildren<Animator>();
+        }
+
         private void Animate(bool walk)
         {
             if (anim == null)

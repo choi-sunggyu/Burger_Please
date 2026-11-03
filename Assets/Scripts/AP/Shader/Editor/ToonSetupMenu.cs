@@ -37,8 +37,8 @@ public static class ToonSetupMenu
         GameObject employeePrefab = AssetDatabase.LoadAssetAtPath<GameObject>(EmployeePrefabPath);
         Material plain43 = AssetDatabase.LoadAssetAtPath<Material>("Assets/Resource/CEO/Material #43.mat");
         Material toon43 = AssetDatabase.LoadAssetAtPath<Material>("Assets/Resource/CEO/Material_43_Toon.mat");
-        Material plain26 = AssetDatabase.LoadAssetAtPath<Material>("Assets/Resource/ArBa/Material #26.mat");
-        Material toon26 = AssetDatabase.LoadAssetAtPath<Material>("Assets/Resource/ArBa/Material_26_Toon.mat");
+        Material plain26 = AssetDatabase.LoadAssetAtPath<Material>("Assets/Resource/ArBa/Default/Material #26.mat");
+        Material toon26 = AssetDatabase.LoadAssetAtPath<Material>("Assets/Resource/ArBa/Default/Material_26_Toon.mat");
         Material outline = AssetDatabase.LoadAssetAtPath<Material>("Assets/Materials/MAT_Outline.mat");
 
         if (canvas == null || manager == null || player == null || employeePrefab == null ||

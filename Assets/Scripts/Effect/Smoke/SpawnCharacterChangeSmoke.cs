@@ -5,12 +5,14 @@ public class SpawnCharacterChangeSmoke : MonoBehaviour
 {
     // C를 누르면 Smoke가 생성되도록 하는 스크립트
     [SerializeField] private GameObject smokePrefab; // Smoke Prefab
+    [SerializeField] private ChangeCostume changeCostume; // 연기와 함께 전환할 코스튬
 
     void Update()
     {
         if(Keyboard.current != null && Keyboard.current.cKey.wasPressedThisFrame)
         {
             SpawnSmoke();
+            if (changeCostume != null) changeCostume.Toggle();
         }
     }
 
