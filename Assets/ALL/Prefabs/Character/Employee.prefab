@@ -46,6 +46,7 @@ GameObject:
   - component: {fileID: 2114220302428575941}
   - component: {fileID: 5541071987862998781}
   - component: {fileID: 4114696831070120982}
+  - component: {fileID: 5910847602150207027}
   m_Layer: 0
   m_Name: Employee
   m_TagString: Employee
@@ -178,6 +179,42 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::WorkerInteraction
   speechBubble: {fileID: 0}
+--- !u!114 &5910847602150207027
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5609196744368838636}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a1364ade4c6ca3e42b01e53473cb5bd1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::EmployeeWander
+  ground:
+    groundMask:
+      serializedVersion: 2
+      m_Bits: 193
+    obstacleMask:
+      serializedVersion: 2
+      m_Bits: 0
+    maxSlope: 40
+    clearance: 0.4
+    rayHeight: 20
+  stepHeight: 0.5
+  speedRange: {x: 1.5, y: 3}
+  turnSpeed: 240
+  wanderDistance: 2
+  wanderRadius: 1
+  wanderJitter: 4
+  homeRadius: 12
+  sensorLength: 1.5
+  sensorAngle: 35
+  sensorHeight: 0.3
+  sensorInterval: 0.1
+  avoidWeight: 3
+  moveTimeRange: {x: 2, y: 5}
+  idleTimeRange: {x: 0.5, y: 2}
 --- !u!1 &5734583484050626890
 GameObject:
   m_ObjectHideFlags: 0
