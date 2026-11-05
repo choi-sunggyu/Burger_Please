@@ -4,6 +4,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+// 태그로 직원을 찾아 가끔 근처의 두 명이 대화하게 한다. 대화는 표시만 하고 직원의 이동/업무는 멈추지 않는다.
 public class WorkerEncounterManager : MonoBehaviour
 {
     [Serializable]
@@ -15,18 +16,19 @@ public class WorkerEncounterManager : MonoBehaviour
         public EmotionType emotionB;
     }
 
-    [Header("Detection")]
-    [SerializeField] private float detectionRange = 2f;
-    [SerializeField] private float separationRange = 3f;
-    [SerializeField] private float scanInterval = 0.3f;
+    [Header("Discovery")]
+    [SerializeField] private string employeeTag = "Employee";
+    [SerializeField] private float scanInterval = 1f;
+
+    // 스캔마다 태그로 다시 채우므로 중간에 고용/해고해도 자동 반영 (Inspector 확인용)
+    [SerializeField] private List<WorkerEncounter> workers = new();
 
     [Header("Interaction")]
-    [SerializeField, Range(0f, 1f)]
-    private float encounterChance = 0.8f;
+    [SerializeField] private float detectionRange = 3f;
+    [SerializeField] private Vector2 eventInterval = new Vector2(45f, 120f);   // 다음 대화까지 대기 (최소, 최대 초)
+    [SerializeField] private float lineDuration = 2f;
 
-    [SerializeField] private float interactionDuration = 2f;
-
-    [Header("Speech Bubble (Optional)")]
+    [Header("Speech Bubble")]
     [SerializeField] private RectTransform canvasRoot;
     [SerializeField] private SpeechBubbleUI bubblePrefab;
 
@@ -56,16 +58,8 @@ public class WorkerEncounterManager : MonoBehaviour
         }
     };
 
-    private readonly List<WorkerEncounter> workers = new();
-
-    private readonly HashSet<ulong> attemptedPairs = new();
-    private readonly HashSet<ulong> nearbyPairs = new();
-    private readonly List<ulong> releaseKeys = new();
-
-    private readonly HashSet<WorkerEncounter> busyWorkers = new();
-
-    private readonly Stack<SpeechBubbleUI> bubblePool = new();
-    private readonly HashSet<SpeechBubbleUI> activeBubbles = new();
+    private SpeechBubbleUI bubble;   // 대사는 한 번에 한 명만 하므로 하나로 충분
+    private float nextEventTime;
 
     private void OnEnable()
     {
@@ -74,254 +68,118 @@ public class WorkerEncounterManager : MonoBehaviour
 
     private IEnumerator ScanRoutine()
     {
-        yield return null;
+        ScheduleNextEvent();
 
-        var wait = new WaitForSeconds(
-            Mathf.Max(0.05f, scanInterval)
-        );
+        var wait = new WaitForSeconds(Mathf.Max(0.05f, scanInterval));
 
         while (true)
         {
-            ScanWorkers();
+            RefreshWorkers();
+
+            if (Time.time >= nextEventTime &&
+                conversations.Length > 0 &&
+                TryPickNearbyPair(out WorkerEncounter a, out WorkerEncounter b))
+            {
+                // 사교성이 낮은 조합은 이번 기회를 넘길 수 있음
+                if (UnityEngine.Random.value <= (a.Sociability + b.Sociability) * 0.5f)
+                {
+                    Conversation dialogue = conversations[UnityEngine.Random.Range(0, conversations.Length)];
+                    yield return Say(a, dialogue.lineA, dialogue.emotionA);
+                    if (a != null) yield return Say(b, dialogue.lineB, dialogue.emotionB);
+                }
+
+                ScheduleNextEvent();
+            }
+
             yield return wait;
         }
     }
 
-    private static ulong GetPairKey(
-        WorkerEncounter a, WorkerEncounter b)
+    private void ScheduleNextEvent()
     {
-        uint idA = unchecked((uint)a.GetInstanceID());
-        uint idB = unchecked((uint)b.GetInstanceID());
-
-        if (idA > idB)
-            (idA, idB) = (idB, idA);
-
-        return ((ulong)idA << 32) | idB;
+        nextEventTime = Time.time + UnityEngine.Random.Range(eventInterval.x, eventInterval.y);
     }
 
-    private void ScanWorkers()
+    private void RefreshWorkers()
     {
         workers.Clear();
-        nearbyPairs.Clear();
 
-        foreach (var worker in WorkerEncounter.ActiveWorkers)
+        // 프리팹의 루트와 Worker 자식이 둘 다 태그를 달고 있어 같은 직원이 두 번 잡히므로 중복 제거
+        foreach (GameObject tagged in GameObject.FindGameObjectsWithTag(employeeTag))
         {
-            if (worker != null && worker.isActiveAndEnabled)
+            WorkerEncounter worker = tagged.GetComponentInChildren<WorkerEncounter>();
+            if (worker != null && !workers.Contains(worker))
                 workers.Add(worker);
         }
+    }
 
-        float detectSqr = detectionRange * detectionRange;
-
-        float releaseRange = Mathf.Max(
-            separationRange,
-            detectionRange + 0.1f
-        );
-
-        float releaseSqr = releaseRange * releaseRange;
+    // 범위 안의 조합 중 무작위로 하나 (저수지 샘플링: 조합을 따로 모으지 않음)
+    private bool TryPickNearbyPair(out WorkerEncounter a, out WorkerEncounter b)
+    {
+        a = b = null;
+        int found = 0;
+        float rangeSqr = detectionRange * detectionRange;
 
         for (int i = 0; i < workers.Count; i++)
         {
+            if (!workers[i].CanInteract)
+                continue;
+
             for (int j = i + 1; j < workers.Count; j++)
             {
-                WorkerEncounter a = workers[i];
-                WorkerEncounter b = workers[j];
-
-                Vector3 delta =
-                    a.transform.position - b.transform.position;
-
-                float distanceSqr = delta.sqrMagnitude;
-
-                if (distanceSqr > releaseSqr)
+                if (!workers[j].CanInteract)
                     continue;
 
-                ulong key = GetPairKey(a, b);
-                nearbyPairs.Add(key);
-
-                if (distanceSqr > detectSqr)
+                Vector3 delta = workers[i].transform.position - workers[j].transform.position;
+                if (delta.sqrMagnitude > rangeSqr)
                     continue;
 
-                // 이번 만남에서 이미 시도했는가?
-                if (attemptedPairs.Contains(key))
-                    continue;
-
-                if (!a.CanInteract || !b.CanInteract)
-                    continue;
-
-                if (conversations == null ||
-                    conversations.Length == 0)
-                    continue;
-
-                // 이번 만남은 한 번만 시도
-                attemptedPairs.Add(key);
-
-                float chance =
-                    encounterChance *
-                    (a.Sociability + b.Sociability) * 0.5f;
-
-                if (UnityEngine.Random.value > chance)
-                    continue;
-
-                // 두 알바의 상호작용 상태 확보
-                if (!a.Interaction.TryBeginInteraction())
-                    continue;
-
-                if (!b.Interaction.TryBeginInteraction())
+                found++;
+                if (UnityEngine.Random.Range(0, found) == 0)
                 {
-                    a.Interaction.EndInteraction();
-                    continue;
+                    a = workers[i];
+                    b = workers[j];
                 }
-
-                busyWorkers.Add(a);
-                busyWorkers.Add(b);
-
-                Conversation dialogue =
-                    conversations[
-                        UnityEngine.Random.Range(
-                            0, conversations.Length
-                        )
-                    ];
-
-                StartCoroutine(
-                    ConversationRoutine(a, b, dialogue)
-                );
             }
         }
 
-        // 서로 멀어진 조합은 다시 만날 수 있음
-        releaseKeys.Clear();
+        return found > 0;
+    }
 
-        foreach (ulong key in attemptedPairs)
+    private IEnumerator Say(WorkerEncounter speaker, string line, EmotionType emotion)
+    {
+        if (speaker == null || !speaker.isActiveAndEnabled)
+            yield break;
+
+        speaker.Emotion.ShowEmotion(emotion);
+
+        if (bubble == null && bubblePrefab != null && canvasRoot != null)
+            bubble = Instantiate(bubblePrefab, canvasRoot);
+
+        if (bubble != null)
         {
-            if (!nearbyPairs.Contains(key))
-                releaseKeys.Add(key);
+            bubble.Bind(speaker.Emotion.FollowTarget, speaker.Emotion.Offset);
+            bubble.Show(line);
         }
 
-        foreach (ulong key in releaseKeys)
-            attemptedPairs.Remove(key);
-    }
+        yield return new WaitForSeconds(lineDuration);
 
-    private SpeechBubbleUI AcquireBubble(
-        WorkerEncounter worker)
-    {
-        if (bubblePrefab == null || canvasRoot == null)
-            return null;
-
-        SpeechBubbleUI bubble =
-            bubblePool.Count > 0
-                ? bubblePool.Pop()
-                : Instantiate(bubblePrefab, canvasRoot);
-
-        bubble.gameObject.SetActive(true);
-
-        bubble.Bind(
-            worker.Emotion.FollowTarget,
-            worker.Emotion.Offset
-        );
-
-        bubble.Hide();
-        activeBubbles.Add(bubble);
-
-        return bubble;
-    }
-
-    private void ReleaseBubble(SpeechBubbleUI bubble)
-    {
-        if (bubble == null || !activeBubbles.Remove(bubble))
-            return;
-
-        bubble.Hide();
-        bubble.gameObject.SetActive(false);
-        bubblePool.Push(bubble);
-    }
-
-    private static bool IsValid(WorkerEncounter worker)
-    {
-        return worker != null &&
-               worker.isActiveAndEnabled &&
-               worker.Interaction != null &&
-               worker.Interaction.IsInteracting;
-    }
-
-    private IEnumerator ConversationRoutine(
-        WorkerEncounter a,
-        WorkerEncounter b,
-        Conversation dialogue)
-    {
-        SpeechBubbleUI bubbleA = AcquireBubble(a);
-        SpeechBubbleUI bubbleB = AcquireBubble(b);
-
-        // 두 캐릭터에 감정 이모티콘 표시
-        a.Emotion.ShowEmotion(dialogue.emotionA);
-        b.Emotion.ShowEmotion(dialogue.emotionB);
-
-        if (bubbleA != null)
-            bubbleA.Show(dialogue.lineA);
-
-        float half = Mathf.Max(0.2f, interactionDuration) * 0.5f;
-
-        yield return new WaitForSeconds(half);
-
-        if (bubbleA != null)
-            bubbleA.Hide();
-
-        if (IsValid(a) && IsValid(b))
-        {
-            if (bubbleB != null)
-                bubbleB.Show(dialogue.lineB);
-
-            yield return new WaitForSeconds(half);
-        }
-
-        ReleaseBubble(bubbleA);
-        ReleaseBubble(bubbleB);
-
-        FinishInteraction(a, b);
-    }
-
-    private void FinishInteraction(
-        WorkerEncounter a, WorkerEncounter b)
-    {
-        if (a != null)
-        {
-            if (a.Interaction != null)
-                a.Interaction.EndInteraction();
-
-            busyWorkers.Remove(a);
-        }
-
-        if (b != null)
-        {
-            if (b.Interaction != null)
-                b.Interaction.EndInteraction();
-
-            busyWorkers.Remove(b);
-        }
+        if (bubble != null)
+            bubble.Hide();
     }
 
     private void OnDisable()
     {
         StopAllCoroutines();
 
-        foreach (var worker in busyWorkers)
-        {
-            if (worker != null && worker.Interaction != null)
-                worker.Interaction.EndInteraction();
-        }
-
-        busyWorkers.Clear();
-
-        foreach (var bubble in activeBubbles)
-        {
-            if (bubble == null)
-                continue;
-
+        if (bubble != null)
             bubble.Hide();
-            bubble.gameObject.SetActive(false);
-            bubblePool.Push(bubble);
-        }
+    }
 
-        activeBubbles.Clear();
-        attemptedPairs.Clear();
-        nearbyPairs.Clear();
+    // 드물게 일어나는 이벤트라 확인용으로 대기 시간을 건너뜀 (근처에 두 명이 있어야 시작됨)
+    [ContextMenu("Test/Next Event Now")]
+    private void TestNextEventNow()
+    {
+        nextEventTime = 0f;
     }
 }

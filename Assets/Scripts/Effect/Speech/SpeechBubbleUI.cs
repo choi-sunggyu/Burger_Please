@@ -19,6 +19,10 @@ public class SpeechBubbleUI : MonoBehaviour
     [SerializeField] private GameObject visualRoot;
     [SerializeField] private TMP_Text dialogueText;
 
+    [Header("Layout")]
+    [SerializeField] private float maxTextWidth = 480f;   // 이보다 길면 줄바꿈
+    [SerializeField] private float screenMargin = 16f;    // 화면 가장자리와의 최소 간격
+
     private bool showRequested;
 
     private void Awake()
@@ -26,13 +30,9 @@ public class SpeechBubbleUI : MonoBehaviour
         if (bubbleRect == null)
             bubbleRect = GetComponent<RectTransform>();
 
+        // anchoredPosition은 부모 기준이므로 부모를 좌표계로 사용
         if (canvasRect == null)
-        {
-            Canvas canvas = GetComponentInParent<Canvas>();
-
-            if (canvas != null)
-                canvasRect = canvas.GetComponent<RectTransform>();
-        }
+            canvasRect = transform.parent as RectTransform;
 
         if (targetCamera == null)
             targetCamera = Camera.main;
@@ -51,7 +51,15 @@ public class SpeechBubbleUI : MonoBehaviour
         if (dialogueText == null || visualRoot == null)
             return;
 
+        // 비활성 상태에선 TMP가 초기화되지 않아 크기를 잴 수 없으므로 먼저 켠다
+        SetVisualActive(true);
         dialogueText.SetText(message);
+
+        // 말풍선을 글자 크기에 맞춤 (여백은 프리팹의 텍스트 RectTransform 값을 그대로 사용)
+        Vector2 textSize = dialogueText.GetPreferredValues(message, maxTextWidth, Mathf.Infinity);
+        textSize.x = Mathf.Min(textSize.x, maxTextWidth);
+        bubbleRect.sizeDelta = textSize - dialogueText.rectTransform.sizeDelta;
+
         showRequested = true;
 
         UpdatePosition();
@@ -112,9 +120,24 @@ public class SpeechBubbleUI : MonoBehaviour
             return;
         }
 
-        // 5. 캐릭터 머리 위로 말풍선 배치
-        bubbleRect.anchoredPosition =
-            localPoint + Vector2.up * uiYOffset;
+        // 5. 캐릭터 머리 위로 배치하되 말풍선 전체가 화면 안에 들어오게 제한
+        Vector2 position = localPoint + Vector2.up * uiYOffset;
+        Rect area = canvasRect.rect;
+        Vector2 size = bubbleRect.rect.size;
+        Vector2 pivot = bubbleRect.pivot;
+
+        position.x = Mathf.Clamp(
+            position.x,
+            area.xMin + size.x * pivot.x + screenMargin,
+            area.xMax - size.x * (1f - pivot.x) - screenMargin
+        );
+        position.y = Mathf.Clamp(
+            position.y,
+            area.yMin + size.y * pivot.y + screenMargin,
+            area.yMax - size.y * (1f - pivot.y) - screenMargin
+        );
+
+        bubbleRect.anchoredPosition = position;
 
         SetVisualActive(true);
     }
