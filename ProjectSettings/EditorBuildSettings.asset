@@ -14,9 +14,12 @@ EditorBuildSettings:
   - enabled: 0
     path: Assets/Synty/PolygonCity/Scenes/FPS_TestScene.unity
     guid: 35299a6a99d6dfe4bb709527ba95aab0
-  - enabled: 1
+  - enabled: 0
     path: Assets/ALL/Scenes/TestScene.unity
     guid: b6c27c968cf89c94db2696f0bd15f66c
+  - enabled: 1
+    path: Assets/ALL/Scenes/PolyScene.unity
+    guid: a726804230413b24985d7470f5c61292
   m_configObjects:
     com.unity.input.settings.actions: {fileID: -944628639613478452, guid: 052faaac586de48259a63d0c4782560b, type: 3}
   m_UseUCBPForAssetBundles: 0

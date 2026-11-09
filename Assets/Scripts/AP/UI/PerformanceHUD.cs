@@ -12,7 +12,7 @@ public class PerformanceHUD : MonoBehaviour
 
     [Header("Settings")]
     [SerializeField] private float updateInterval = 0.5f;
-    [SerializeField] private int targetFPS = 60;
+    [SerializeField] private int targetFPS = 120;
 
     // Rendering
     private ProfilerRecorder vertexRecorder;
