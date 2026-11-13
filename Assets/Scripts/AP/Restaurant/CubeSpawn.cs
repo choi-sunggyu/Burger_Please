@@ -34,6 +34,7 @@ public class CubeSpawn : MonoBehaviour
     private void SpawnCube()
     {
         GameObject cube = Instantiate(cubePrefab, cubeSpawnPoint.position, Quaternion.identity, cubeSpawnPoint);
+        VLB.BakedMaterialRemap.Apply(cube);
         Relayout(); // 새 큐브 포함 전체 재배치
     }
 

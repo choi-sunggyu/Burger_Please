@@ -22,7 +22,7 @@ public class MoneyPile : MonoBehaviour
 
     public void Add(GameObject moneyPrefab)
     {
-        Instantiate(moneyPrefab, transform.position, transform.rotation, transform);
+        VLB.BakedMaterialRemap.Apply(Instantiate(moneyPrefab, transform.position, transform.rotation, transform));
         Relayout();
     }
 

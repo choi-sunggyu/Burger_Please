@@ -47,7 +47,7 @@ public class Packing : MonoBehaviour
         }
 
         Vector3 pos = packTable.position + Vector3.up * packStackHeight * packTable.childCount;
-        Instantiate(packPrefab, pos, packTable.rotation, packTable);
+        VLB.BakedMaterialRemap.Apply(Instantiate(packPrefab, pos, packTable.rotation, packTable).gameObject);
         timer = 0f;
     }
 }

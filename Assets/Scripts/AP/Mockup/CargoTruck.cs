@@ -68,6 +68,7 @@ public class CargoTruck : MonoBehaviour
         UpdateLabel();
 
         GameObject box = Instantiate(boxPrefab, rearPoint + Vector3.up * rearHeight, boxPrefab.transform.rotation);
+        VLB.BakedMaterialRemap.Apply(box);
         box.transform.localScale = Vector3.one * boxScale;
 
         if (count == 0) LeaveAndReturn();

@@ -1,57 +1,49 @@
-using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.EventSystems;
+using UnityEngine.UI;
 using UnityEngine.InputSystem.EnhancedTouch;
 using Touch = UnityEngine.InputSystem.EnhancedTouch.Touch;
 using TouchPhase = UnityEngine.InputSystem.TouchPhase;
 
-// 플로팅 조이스틱: 화면 아무 곳이나 한 손가락으로 누르고 드래그하면 그 방향으로 이동 입력
-// 손가락이 두 개가 되면 카메라 제스처(줌/회전/틸트)에 양보하고 입력 해제
+// 왼쪽 아래 고정 조이스틱: 조이스틱 근처에서 한 손가락으로 누르고 드래그하면 이동 입력
+// 손가락이 두 개가 되면 카메라 핀치 줌에 양보하고 입력 해제
+// 그래픽을 지정하지 않으면 실행 시 원형 UI를 직접 만든다.
 public class TouchJoystick : MonoBehaviour
 {
-    [SerializeField] private float radius = 80f;                      // 최대 드래그 거리 (캔버스 단위)
+    [SerializeField] private float radius = 120f;                      // 최대 드래그 거리 (1080p 기준 픽셀)
+    [SerializeField] private Vector2 margin = new Vector2(220f, 220f); // 화면 왼쪽 아래에서 조이스틱 중심까지 (1080p 기준)
+    [SerializeField] private float touchArea = 2f;                     // 중심에서 radius * touchArea 안에서 시작한 터치만 사용
     [SerializeField, Range(0f, 0.5f)] private float deadZone = 0.1f;
-    [SerializeField] private bool simulateTouchInEditor = false;       // 에디터에서 마우스를 터치로 사용
+    [SerializeField] private bool showOnDesktop = false;               // 터치스크린이 없는 환경(에디터 등)에서도 표시
 
-    [Header("Visual (선택, Screen Space - Overlay 캔버스)")]
+    [Header("Visual (비우면 자동 생성)")]
     [SerializeField] private RectTransform background;
     [SerializeField] private RectTransform handle;
 
     private Finger activeFinger;
-    private Vector2 origin;
-    private Canvas canvas;
-
-    private readonly List<RaycastResult> raycastResults = new List<RaycastResult>();
-    private PointerEventData pointerData;
 
     // -1 ~ 1, 크기는 드래그 정도
     public Vector2 Value { get; private set; }
 
-    private float PixelRadius => radius * (canvas != null ? canvas.scaleFactor : Screen.height / 1080f);
+    private float Scale => Screen.height / 1080f;
+    private float PixelRadius => radius * Scale;
+    private Vector2 Center => margin * Scale;
 
     private void Awake()
     {
-        if (background != null)
-            canvas = background.GetComponentInParent<Canvas>();
+        if (background == null || handle == null)
+            BuildVisual();
     }
 
     private void OnEnable()
     {
         EnhancedTouchSupport.Enable();
-
-        if (simulateTouchInEditor && Application.isEditor)
-            TouchSimulation.Enable();
-
-        SetVisible(false);
+        SetVisible(Application.isMobilePlatform || showOnDesktop);
+        ResetHandle();
     }
 
     private void OnDisable()
     {
         Release();
-
-        if (simulateTouchInEditor && Application.isEditor)
-            TouchSimulation.Disable();
-
         EnhancedTouchSupport.Disable();
     }
 
@@ -59,7 +51,7 @@ public class TouchJoystick : MonoBehaviour
     {
         var touches = Touch.activeTouches;
 
-        // 0개 = 손 뗌, 2개 이상 = 카메라 제스처
+        // 0개 = 손 뗌, 2개 이상 = 카메라 핀치
         if (touches.Count != 1)
         {
             Release();
@@ -67,16 +59,16 @@ public class TouchJoystick : MonoBehaviour
         }
 
         Touch touch = touches[0];
+        Vector2 center = Center;
 
         if (activeFinger == null)
         {
-            // 두 손가락 제스처 후 남은 손가락으로는 시작하지 않음 (갑자기 움직이는 것 방지)
-            if (touch.phase != TouchPhase.Began || IsOverUI(touch.screenPosition))
+            // 핀치 후 남은 손가락이나 조이스틱 밖에서 시작한 터치는 무시
+            if (touch.phase != TouchPhase.Began ||
+                Vector2.Distance(touch.screenPosition, center) > PixelRadius * touchArea)
                 return;
 
             activeFinger = touch.finger;
-            origin = touch.screenPosition;
-            SetVisible(true);
         }
 
         if (touch.finger != activeFinger ||
@@ -88,50 +80,76 @@ public class TouchJoystick : MonoBehaviour
         }
 
         float pixelRadius = PixelRadius;
-        Vector2 offset = Vector2.ClampMagnitude(touch.screenPosition - origin, pixelRadius);
+        Vector2 offset = Vector2.ClampMagnitude(touch.screenPosition - center, pixelRadius);
         Vector2 value = offset / pixelRadius;
 
         Value = value.magnitude < deadZone ? Vector2.zero : value;
-
-        if (background != null) background.position = origin;
-        if (handle != null) handle.position = origin + offset;
+        handle.position = center + offset;
     }
 
     private void Release()
     {
         activeFinger = null;
         Value = Vector2.zero;
-        SetVisible(false);
+        ResetHandle();
+    }
+
+    private void ResetHandle()
+    {
+        if (background == null) return;
+        background.position = Center;
+        handle.position = Center;
     }
 
     private void SetVisible(bool visible)
     {
-        if (background != null) background.gameObject.SetActive(visible);
-        if (handle != null) handle.gameObject.SetActive(visible);
+        background.gameObject.SetActive(visible);
+        handle.gameObject.SetActive(visible);
     }
 
-    // 버튼 등 UI 위에서 시작한 터치는 이동으로 쓰지 않음
-    private bool IsOverUI(Vector2 screenPosition)
+    // Screen Space Overlay 캔버스 + 원형 이미지 2개 (raycastTarget 끔: 다른 UI 클릭을 막지 않음)
+    private void BuildVisual()
     {
-        EventSystem eventSystem = EventSystem.current;
-        if (eventSystem == null)
-            return false;
+        var canvasGo = new GameObject("JoystickCanvas", typeof(Canvas), typeof(CanvasScaler));
+        canvasGo.transform.SetParent(transform, false);
+        var canvas = canvasGo.GetComponent<Canvas>();
+        canvas.renderMode = RenderMode.ScreenSpaceOverlay;
+        canvas.sortingOrder = 100;
 
-        pointerData ??= new PointerEventData(eventSystem);
-        pointerData.position = screenPosition;
+        Sprite circle = CreateCircleSprite(128);
+        background = CreateImage("Background", canvasGo.transform, circle, new Color(1f, 1f, 1f, 0.25f));
+        handle = CreateImage("Handle", canvasGo.transform, circle, new Color(1f, 1f, 1f, 0.7f));
+        background.sizeDelta = Vector2.one * PixelRadius * 2f; // CanvasScaler 기본값(픽셀 고정)이라 픽셀 = 캔버스 단위
+        handle.sizeDelta = Vector2.one * PixelRadius;
+    }
 
-        raycastResults.Clear();
-        eventSystem.RaycastAll(pointerData, raycastResults);
+    private static RectTransform CreateImage(string name, Transform parent, Sprite sprite, Color color)
+    {
+        var go = new GameObject(name, typeof(RectTransform), typeof(Image));
+        go.transform.SetParent(parent, false);
+        var image = go.GetComponent<Image>();
+        image.sprite = sprite;
+        image.color = color;
+        image.raycastTarget = false;
+        var rect = (RectTransform)go.transform;
+        rect.anchorMin = rect.anchorMax = Vector2.zero; // position을 화면 픽셀로 직접 지정
+        return rect;
+    }
 
-        foreach (RaycastResult result in raycastResults)
+    private static Sprite CreateCircleSprite(int size)
+    {
+        var tex = new Texture2D(size, size, TextureFormat.RGBA32, false);
+        float r = size * 0.5f;
+        var pixels = new Color32[size * size];
+        for (int y = 0; y < size; y++)
+        for (int x = 0; x < size; x++)
         {
-            // 조이스틱 자체 그래픽은 제외
-            if (result.gameObject.transform.IsChildOf(transform))
-                continue;
-
-            return true;
+            float d = Vector2.Distance(new Vector2(x + 0.5f, y + 0.5f), new Vector2(r, r));
+            byte a = (byte)(Mathf.Clamp01(r - d) * 255f); // 가장자리 1픽셀 안티앨리어싱
+            pixels[y * size + x] = new Color32(255, 255, 255, a);
         }
-
-        return false;
+        tex.SetPixels32(pixels);
+        tex.Apply();
+        return Sprite.Create(tex, new Rect(0, 0, size, size), new Vector2(0.5f, 0.5f));
     }
 }

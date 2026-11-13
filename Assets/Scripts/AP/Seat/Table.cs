@@ -53,7 +53,7 @@ public class Table : MonoBehaviour
     public void PlaceTrash(GameObject trashPrefab)
     {
         Vector3 offset = Vector3.up * trashStackHeight * trashPoint.childCount;
-        Instantiate(trashPrefab, trashPoint.position + offset, Quaternion.identity, trashPoint);   // 부모 지정이 핵심
+        VLB.BakedMaterialRemap.Apply(Instantiate(trashPrefab, trashPoint.position + offset, Quaternion.identity, trashPoint));   // 부모 지정이 핵심
     }
 
     void OnDrawGizmos()

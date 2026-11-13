@@ -8,7 +8,7 @@ Material:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_Name: MAT_Outline
-  m_Shader: {fileID: -6465566751694194690, guid: 94fa2fa6a9430a64a831361c72aeb886, type: 3}
+  m_Shader: {fileID: 4800000, guid: ce981bf3c696c514f95cc7d5bd8550c1, type: 3}
   m_Parent: {fileID: 0}
   m_ModifiedSerializedProperties: 0
   m_ValidKeywords: []
@@ -38,9 +38,10 @@ Material:
         m_Offset: {x: 0, y: 0}
     m_Ints: []
     m_Floats:
-    - _OutlineWidth: 1.5
+    - _OutlineWidth: 2
     - _QueueControl: 0
     - _QueueOffset: 0
+    - _StencilGroup: 1
     - _XRMotionVectorsPass: 1
     m_Colors:
     - _OutlineColor: {r: 0, g: 0, b: 0, a: 1}

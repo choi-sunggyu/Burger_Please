@@ -34,6 +34,7 @@ public class CustomerSpawner : MonoBehaviour
         timer = 0f;
 
         Customer customer = Instantiate(customerPrefab, spawnPoint.position, spawnPoint.rotation);
+        VLB.BakedMaterialRemap.Apply(customer.gameObject);
         customer.Init(queue, tables, exitPoint, Random.Range(minOrder, maxOrder + 1));
     } 
 
@@ -41,6 +42,7 @@ public class CustomerSpawner : MonoBehaviour
     {
         var obj = Instantiate(customerPrefab, spawnPoint.position,
                              spawnPoint.rotation);
+        VLB.BakedMaterialRemap.Apply(obj.gameObject);
         if (!obj.TryGetComponent(out Customer customer))
         {
             Debug.LogError("[CustomerSpawner] 프리팹에 Customer 컴포넌트가 없습니다.", customerPrefab);

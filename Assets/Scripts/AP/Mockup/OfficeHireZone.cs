@@ -60,6 +60,7 @@ public class OfficeHireZone : MonoBehaviour
             Debug.LogWarning($"[OfficeHireZone] 스폰 지점 근처에 NavMesh가 없습니다: {pos}", spawnPoint);
 
         GameObject go = Instantiate(workerPrefab, pos, spawnPoint.rotation);
+        VLB.BakedMaterialRemap.Apply(go);
         go.transform.localScale = Vector3.one * workerScale;
 
         var worker = go.AddComponent<MockWorker>();
