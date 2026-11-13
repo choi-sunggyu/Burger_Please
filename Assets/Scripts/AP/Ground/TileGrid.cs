@@ -5,7 +5,7 @@ using UnityEditor;
 
 // layout 글자대로 타일 프리팹을 격자에 배치한다.
 // 에디터: 인스펙터의 Build/Clear 버튼 또는 컴포넌트 ⋮ 메뉴 > Build Tiles
-// 플레이 중: Game 뷰의 OnGUI 패널 (에디터와 Development Build에서만 표시)
+// 플레이 중: 화면 오른쪽 위 OnGUI 패널 (에디터와 Development Build에서만 표시)
 // 칸 크기 = 사용한 타일 중 가장 큰 바닥(Concrete_Floor) 크기, 각 타일은 바닥 중심을 칸 중심에 맞춘다.
 public class TileGrid : MonoBehaviour
 {
@@ -78,6 +78,32 @@ public class TileGrid : MonoBehaviour
         if (!Application.isPlaying) EditorUtility.SetDirty(gameObject);
 #endif
         Debug.Log($"[TileGrid] 타일 {placed.Count}개 배치, 칸 크기 {cell}", this);
+
+        if (Application.isPlaying) ResetPlayer();
+    }
+
+    // 플레이 시작 시 플레이어 위치를 기억해 두고, 플레이 중 Build하면 그 위치로 되돌린다.
+    private Transform player;
+    private Vector3 playerStartPos;
+    private Quaternion playerStartRot;
+
+    private void Start()
+    {
+        var p = FindFirstObjectByType<AstronautPlayer.AstronautPlayer>();
+        if (p == null) return;
+        player = p.transform;
+        playerStartPos = player.position;
+        playerStartRot = player.rotation;
+    }
+
+    private void ResetPlayer()
+    {
+        if (player == null) return;
+        // CharacterController가 켜져 있으면 위치를 바꿔도 다음 Move에서 되돌려지므로 잠시 끈다.
+        var controller = player.GetComponent<CharacterController>();
+        if (controller != null) controller.enabled = false;
+        player.SetPositionAndRotation(playerStartPos, playerStartRot);
+        if (controller != null) controller.enabled = true;
     }
 
     // 이 오브젝트의 자식을 전부 지운다. 에디터 모드에서는 Ctrl+Z로 되돌릴 수 있음.
@@ -144,29 +170,47 @@ public class TileGrid : MonoBehaviour
 #endif
 
 #if UNITY_EDITOR || DEVELOPMENT_BUILD
+    // 화면 오른쪽 위 고정 패널. 모바일 터치를 위해 dpi에 맞춰 키우고, 슬라이더 대신 -/+ 버튼을 쓴다.
     private static readonly string[] RotationLabels = { "0", "90", "180", "270" };
-    private Rect windowRect = new Rect(10, 10, 340, 260);
+    private const float PanelWidth = 300f, Margin = 8f, RowHeight = 36f;
+    private bool guiOpen;
+    private bool autoBuild = true;  // 간격·크기·회전을 바꾸면 바로 다시 배치
+    private Rect windowRect;
 
     private void OnGUI()
     {
         if (!showRuntimeGui) return;
+
+        // 160dpi = 1배 (안드로이드 dp 기준). dpi를 모르면 1배.
+        float scale = Mathf.Max(1f, Screen.dpi > 0f ? Screen.dpi / 160f : 1f);
+        GUI.matrix = Matrix4x4.Scale(new Vector3(scale, scale, 1f));
+        float right = Screen.width / scale - Margin;
+
+        if (!guiOpen)
+        {
+            if (GUI.Button(new Rect(right - 120f, Margin, 120f, RowHeight + 8f), "Tile Grid ▼")) guiOpen = true;
+            return;
+        }
+
+        windowRect = new Rect(right - PanelWidth, Margin, PanelWidth, windowRect.height);
         windowRect = GUILayout.Window(GetInstanceID(), windowRect, DrawWindow, "Tile Grid");
     }
 
     private void DrawWindow(int id)
     {
-        GUILayout.Label("Layout");
-        layout = GUILayout.TextArea(layout, GUILayout.MinHeight(100));
+        GUILayoutOption h = GUILayout.Height(RowHeight);
 
         GUILayout.BeginHorizontal();
-        GUILayout.Label($"Gap {gap:F2}", GUILayout.Width(70));
-        gap = GUILayout.HorizontalSlider(gap, 0f, 10f);
+        autoBuild = GUILayout.Toggle(autoBuild, " 자동 Build", h);
+        if (GUILayout.Button("닫기 ▲", h, GUILayout.Width(90f))) guiOpen = false;
         GUILayout.EndHorizontal();
 
-        GUILayout.BeginHorizontal();
-        GUILayout.Label($"Size x{tileScale:F2}", GUILayout.Width(70));
-        tileScale = GUILayout.HorizontalSlider(tileScale, 0.1f, 5f);
-        GUILayout.EndHorizontal();
+        GUILayout.Label("Layout ('.' = 빈칸)");
+        layout = GUILayout.TextArea(layout, GUILayout.MinHeight(RowHeight * 3f));
+
+        bool changed = false;
+        changed |= Stepper("Gap", ref gap, 0.1f, 0f, 10f, h);
+        changed |= Stepper("Size x", ref tileScale, 0.1f, 0.1f, 5f, h);
 
         GUILayout.Label("Rotation Y");
         for (int i = 0; i < tiles.Length; i++)
@@ -174,21 +218,38 @@ public class TileGrid : MonoBehaviour
             string prefabName = tiles[i].prefab != null ? tiles[i].prefab.name : "(없음)";
             int current = Mathf.RoundToInt(Mathf.Repeat(tiles[i].rotationY, 360f) / 90f) % 4;
 
-            GUILayout.BeginHorizontal();
-            GUILayout.Label($"{tiles[i].key} {prefabName}", GUILayout.Width(130));
-            int selected = GUILayout.Toolbar(current, RotationLabels);
-            GUILayout.EndHorizontal();
+            GUILayout.Label($"{tiles[i].key}  {prefabName}");
+            int selected = GUILayout.Toolbar(current, RotationLabels, h);
 
-            // 클릭했을 때만 쓴다. Inspector에 입력한 45 같은 값이 저절로 바뀌지 않게 한다.
-            if (selected != current) tiles[i].rotationY = selected * 90f;
+            // 눌렀을 때만 쓴다. Inspector에 입력한 45 같은 값이 저절로 바뀌지 않게 한다.
+            if (selected != current)
+            {
+                tiles[i].rotationY = selected * 90f;
+                changed = true;
+            }
         }
 
         GUILayout.BeginHorizontal();
-        if (GUILayout.Button("Build")) Build();
-        if (GUILayout.Button("Clear")) ClearTiles();
+        if (GUILayout.Button("Build", GUILayout.Height(RowHeight + 8f))) Build();
+        if (GUILayout.Button("Clear", GUILayout.Height(RowHeight + 8f))) ClearTiles();
         GUILayout.EndHorizontal();
 
-        GUI.DragWindow(new Rect(0, 0, 10000, 20)); // 제목 표시줄을 잡고 이동
+        // Layout 글자 입력은 한 글자마다 다시 짓지 않도록 Build 버튼으로만 반영
+        if (changed && autoBuild) Build();
+    }
+
+    // [라벨 값] [-] [+] 한 줄. 값이 바뀌면 true
+    private static bool Stepper(string label, ref float value, float step, float min, float max, GUILayoutOption h)
+    {
+        float before = value;
+        GUILayout.BeginHorizontal();
+        GUILayout.Label($"{label} {value:F1}", h, GUILayout.Width(110f));
+        GUILayout.FlexibleSpace();
+        if (GUILayout.Button("-", h, GUILayout.Width(48f))) value -= step;
+        if (GUILayout.Button("+", h, GUILayout.Width(48f))) value += step;
+        GUILayout.EndHorizontal();
+        value = Mathf.Clamp(Mathf.Round(value / step) * step, min, max);
+        return !Mathf.Approximately(before, value);
     }
 #endif
 }
