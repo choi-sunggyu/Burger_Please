@@ -134,7 +134,9 @@ public class TileGrid : MonoBehaviour
             return created;
         }
 #endif
-        return Instantiate(prefab, transform);
+        var tile = Instantiate(prefab, transform);
+        VLB.BakedMaterialRemap.Apply(tile);
+        return tile;
     }
 
     // 못 찾으면 prefab이 null인 기본값을 돌려준다.

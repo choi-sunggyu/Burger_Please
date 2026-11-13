@@ -19,6 +19,7 @@ public class CarSpawner : MonoBehaviour
 
         timer = 0f;
         Car car = Instantiate(carPrefab);
+        VLB.BakedMaterialRemap.Apply(car.gameObject);
         car.Init(lane, Random.Range(minOrder, maxOrder + 1));
     }
 }

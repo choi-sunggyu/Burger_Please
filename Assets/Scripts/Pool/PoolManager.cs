@@ -78,6 +78,7 @@ public class PoolManager : MonoBehaviour
         // 부모가 비활성이므로 생성 직후 Awake/OnEnable이 돌지 않는다
         // (엉뚱한 생성 위치를 토끼가 '집'으로 기억하는 문제 방지)
         GameObject rabbit = Instantiate(rabbitPrefab, inactiveRoot);
+        VLB.BakedMaterialRemap.Apply(rabbit);
         rabbit.name = $"Rabbit_{createdCount++}";
         rabbit.SetActive(false); // activeSelf를 꺼둬야 부모를 옮겨도 자동으로 켜지지 않음
         return rabbit;
