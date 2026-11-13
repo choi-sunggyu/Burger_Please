@@ -38,10 +38,10 @@ Material:
         m_Offset: {x: 0, y: 0}
     m_Ints: []
     m_Floats:
-    - _OutlineWidth: 5
+    - _OutlineWidth: 2
     - _QueueControl: 0
-    - _StencilGroup: 1
     - _QueueOffset: 0
+    - _StencilGroup: 1
     - _XRMotionVectorsPass: 1
     m_Colors:
     - _OutlineColor: {r: 0, g: 0, b: 0, a: 1}
