@@ -190,6 +190,7 @@ public class TrafficManager : MonoBehaviour
     {
         GameObject prefab = vehiclePrefabs[UnityEngine.Random.Range(0, vehiclePrefabs.Length)];
         GameObject go = Instantiate(prefab, vehicleRoot);
+        VLB.BakedMaterialRemap.Apply(go);
         return PrepareVehicle(go);
     }
 

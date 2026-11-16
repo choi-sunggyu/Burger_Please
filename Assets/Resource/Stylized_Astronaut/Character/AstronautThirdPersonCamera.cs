@@ -20,8 +20,11 @@ namespace AstronautThirdPersonCamera
         [SerializeField] private float minDistance = 8f;
         [SerializeField] private float maxDistance = 25f;
         [SerializeField] private float wheelStep = 2f;                   // 휠 한 칸당 거리 변화
-        [SerializeField] private float pinchSpeed = 0.05f;               // 핀치 픽셀당 거리 변화
         [SerializeField] private float zoomSmooth = 10f;                 // 줌 보간 속도
+
+        [Header("Orthographic Zoom (카메라가 Orthographic일 때)")]
+        [SerializeField] private float minOrthoSize = 10f;               // minDistance일 때 화면 크기 (확대)
+        [SerializeField] private float maxOrthoSize = 30f;               // maxDistance일 때 화면 크기 (축소)
 
         [Header("Follow")]
         [SerializeField] private float followSmooth = 12f;               // 추적 보간 속도 (0이면 즉시)
@@ -30,12 +33,14 @@ namespace AstronautThirdPersonCamera
         private float currentDistance;
         private Vector3 focusPosition;
         private float prevPinchDistance = -1f;
+        private Camera cam;
 
         // 이동 입력 기준으로 쓰는 고정 요 값
         public float Yaw => yaw;
 
         private void Start()
         {
+            cam = GetComponent<Camera>();
             targetDistance = Mathf.Clamp(distance, minDistance, maxDistance);
             currentDistance = targetDistance;
 
@@ -77,9 +82,9 @@ namespace AstronautThirdPersonCamera
                         touches[1].position.ReadValue()
                     );
 
-                    // 손가락을 벌리면 확대 (거리 감소)
-                    if (prevPinchDistance >= 0f)
-                        targetDistance -= (pinchDistance - prevPinchDistance) * pinchSpeed;
+                    // 손가락을 벌린 비율만큼 확대 (거리 감소). 비율이라 화면 해상도·줌 범위와 무관
+                    if (prevPinchDistance > 0f && pinchDistance > 0f)
+                        targetDistance *= prevPinchDistance / pinchDistance;
 
                     prevPinchDistance = pinchDistance;
                 }
@@ -123,6 +128,11 @@ namespace AstronautThirdPersonCamera
                 focusPosition - rotation * Vector3.forward * currentDistance,
                 rotation
             );
+
+            // Orthographic은 거리로 크기가 안 바뀌므로 같은 줌 비율을 orthographicSize에 적용
+            if (cam != null && cam.orthographic)
+                cam.orthographicSize = Mathf.Lerp(minOrthoSize, maxOrthoSize,
+                    Mathf.InverseLerp(minDistance, maxDistance, currentDistance));
         }
 
         private void OnValidate()

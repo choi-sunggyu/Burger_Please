@@ -24,6 +24,7 @@ public class EmployeeSpawner : MonoBehaviour
             Debug.LogWarning($"[EmployeeSpawner] 스폰 지점 근처에 NavMesh가 없습니다: {pos}", spawnPoint);
 
         Employee e = Instantiate(employeePrefab, pos, spawnPoint.rotation);
+        VLB.BakedMaterialRemap.Apply(e.gameObject);
         e.Init(board, role);
         Tint(e, role);
         return e;

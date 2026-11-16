@@ -18,22 +18,13 @@ namespace AstronautPlayer
         [Header("Camera")]
         public Transform cameraTransform;
 
-        [Header("Dynamic Joystick")]
-        [SerializeField] private float joystickRadius = 100f;
-        [SerializeField] private float deadZone = 0.1f;
-        [SerializeField] private bool leftSideOnly = true;
-
-        private Vector2 touchStartPosition;
-        private Vector2 touchCurrentPosition;
+        private TouchJoystick joystick;
 
         private PlayerCartInteractor cartInteractor;
         private GrabAction grab;
 
         private static readonly int WalkHash = Animator.StringToHash("Walk");
         private static readonly int HoldHash = Animator.StringToHash("Hold");
-
-        private int activeTouchId = -1;
-        private bool isTouching;
 
         private float verticalVelocity;
 
@@ -47,6 +38,11 @@ namespace AstronautPlayer
 
             cartInteractor = GetComponent<PlayerCartInteractor>();
             grab = GetComponentInChildren<GrabAction>();
+
+            // 왼쪽 아래 고정 조이스틱 (없으면 붙여서 UI까지 자동 생성)
+            joystick = GetComponent<TouchJoystick>();
+            if (joystick == null)
+                joystick = gameObject.AddComponent<TouchJoystick>();
         }
 
         // 코스튬 교체 후 활성화된 모델의 Animator를 다시 찾는다
@@ -66,17 +62,12 @@ namespace AstronautPlayer
 
         private void Update()
         {
-            if (Keyboard.current != null)
-            {
-                Debug.Log($"W 입력: {Keyboard.current.wKey.isPressed}");
-            }
             Move();
         }
 
         private void Move()
         {
             Vector2 input = ReadMovementInput();
-            Debug.Log($"Input: {input}");
 
             if (cartInteractor != null && cartInteractor.IsPushing)
             {
@@ -147,79 +138,7 @@ namespace AstronautPlayer
                 return keyboardInput;
 
             // 2. 키보드 입력이 없으면 터치 입력
-            return ReadTouchInput();
-        }
-
-        private Vector2 ReadTouchInput()
-        {
-            Touchscreen screen = Touchscreen.current;
-
-            if (screen == null)
-                return Vector2.zero;
-
-            // 현재 조작 중인 터치 추적
-            if (isTouching)
-            {
-                foreach (var touch in screen.touches)
-                {
-                    if (touch.touchId.ReadValue() != activeTouchId)
-                        continue;
-
-                    if (!touch.press.isPressed)
-                    {
-                        ResetTouch();
-                        return Vector2.zero;
-                    }
-
-                    touchCurrentPosition = touch.position.ReadValue();
-
-                    Vector2 delta =
-                        touchCurrentPosition - touchStartPosition;
-
-                    Vector2 input = Vector2.ClampMagnitude(
-                        delta / Mathf.Max(1f, joystickRadius),
-                        1f
-                    );
-
-                    if (input.magnitude < deadZone)
-                        return Vector2.zero;
-
-                    return input;
-                }
-
-                ResetTouch();
-                return Vector2.zero;
-            }
-
-            // 새로운 터치 시작
-            foreach (var touch in screen.touches)
-            {
-                if (!touch.press.wasPressedThisFrame)
-                    continue;
-
-                Vector2 position = touch.position.ReadValue();
-
-                // 왼쪽 절반에서만 이동 터치 허용
-                if (leftSideOnly && position.x > Screen.width * 0.5f)
-                    continue;
-
-                activeTouchId = touch.touchId.ReadValue();
-                touchStartPosition = position;
-                touchCurrentPosition = position;
-                isTouching = true;
-
-                return Vector2.zero;
-            }
-
-            return Vector2.zero;
-        }
-
-        private void ResetTouch()
-        {
-            isTouching = false;
-            activeTouchId = -1;
-            touchStartPosition = Vector2.zero;
-            touchCurrentPosition = Vector2.zero;
+            return joystick.Value;
         }
 
         private Vector2 ReadKeyboardInput()
