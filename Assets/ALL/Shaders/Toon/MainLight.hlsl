@@ -16,7 +16,8 @@ void MainLight_float(
 #else
     Light mainLight = GetMainLight();
 
-    Direction = mainLight.direction;
+    // No Directional Light: URP reports a black light along +Z, which would shade every surface facing the camera.
+    Direction = any(mainLight.color) ? mainLight.direction : normalize(float3(0.3, 0.8, -0.5));
     Color = mainLight.color;
 #endif
 }

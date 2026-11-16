@@ -47,7 +47,7 @@ Shader "AP/OutlineStencil"
             return output;
         }
 
-        // Same maths as OutlineExpand in SG_Outline: width in pixels at 1080p, sideways on screen only.
+        // Width in pixels at 1080p, pushed sideways on screen only so the hull never pokes through the front surface.
         Varyings HullVert(Attributes input)
         {
             Varyings output;
